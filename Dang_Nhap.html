@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cổng đăng ký học phần</title>
+    <style>
+        * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.5);
+            z-index: -1;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-image: url('anh_nen.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #5a2c0b;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-box {
+            background: #50986e;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 280px;
+            backdrop-filter: blur(5px);
+            border: 2px solid #245139;
+        }
+
+        .login-box h2 {
+            text-align: center;
+            color: rgb(7, 48, 4);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-box p {
+            text-align: center;
+            color: #471d0d;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            color: #fff;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.6rem;
+            margin-bottom: 1rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 2.5rem;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 33%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #333;
+            font-size: 1.2rem;
+        }
+
+        .remember-me {
+            color: #fff;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 8px;
+            background: #064a2e;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #053e27;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .login-box {
+                padding: 1.5rem;
+            }
+
+            button {
+                font-size: 0.9rem;
+            }
+
+            .toggle-password {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .login-box {
+                padding: 1rem;
+            }
+
+            button {
+                font-size: 0.8rem;
+            }
+
+            .toggle-password {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>CỔNG ĐĂNG KÝ HỌC PHẦN</h1>
+
+    <div class="login-box">
+        <h2>ĐĂNG NHẬP</h2>
+        <p>Cổng đăng ký học phần</p>
+        <form onsubmit="return handleLogin(event)">
+        <label for="username">Tên đăng nhập</label>
+        <input type="text" id="username" name="username" placeholder="Tên đăng nhập" required>
+
+        <label for="password">Mật khẩu</label>
+        <div class="password-container">
+            <input type="password" id="password" name="password" placeholder="Mật khẩu" required>
+            <span class="toggle-password" onclick="togglePassword()" id="toggleIcon">👁️</span>
+        </div>
+
+        <label class="remember-me">
+            <input type="checkbox" name="remember"> Nhớ mật khẩu
+        </label>
+
+        <button type="submit">Đăng nhập</button>
+        </form>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const icon = document.getElementById('toggleIcon');
+
+            const start = passwordInput.selectionStart;
+            const end = passwordInput.selectionEnd;
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.textContent = '🙈'; // Mắt nhắm → hiện ký tự
+            } else {
+                passwordInput.type = 'password';
+                icon.textContent = '👁️'; // Mắt mở → hiện dấu chấm
+            }
+
+            passwordInput.focus();
+            passwordInput.setSelectionRange(start, end);
+        }
+
+
+        function handleLogin(event) {
+            event.preventDefault(); // Ngăn form gửi đi
+
+            const username = document.getElementById('username').value.trim().toLowerCase();
+            const password = document.getElementById('password').value.trim();
+
+            // Giả lập phân quyền dựa trên tên đăng nhập
+            if (username === 'admin' && password === 'admin123') {
+                window.location.href = 'Trang_chu_Admin.html';
+            } else if (username === 'giangvien' && password === 'gv123') {
+                window.location.href = 'trang_chu_giang_vien.html';
+            } else if (username === 'sinhvien' && password === 'sv123') {
+                window.location.href = 'trang_chu_sinh_vien.html';
+            } else {
+                alert('Sai tên đăng nhập hoặc mật khẩu.');
+            }
+
+            return false;
+        }
+    </script>
+</body>
+</html>
+
