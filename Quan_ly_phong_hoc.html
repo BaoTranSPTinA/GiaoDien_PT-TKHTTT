@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý học phần</title>
+    <title>Quản lý phòng học</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <style>
         * {
@@ -82,12 +82,11 @@
             border-radius: 4px;
         }
         .sidebar ul li.active a {
-            color: #245139;  /* Thay đổi màu chữ */
+            color: #245139;
         }
         .sidebar ul li.active i {
-            color: #245139;  /* Thay đổi màu chữ */
+            color: #245139;
         }
-
         .main {
             flex: 1;
             display: flex;
@@ -142,7 +141,7 @@
         }
         th {
             background-color: #245139;
-            color:#fff ;
+            color: #fff;
         }
         .actions .edit-btn {
             margin-right: 5px;
@@ -168,7 +167,6 @@
         .actions .delete-btn:hover {
             background-color: #6f0e0e;
         }
-
         .add-form {
             margin-bottom: 2rem;
             background-color: #fff;
@@ -181,6 +179,7 @@
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            width: calc(100% - 1rem);
         }
         .add-form button {
             padding: 8px 16px;
@@ -193,6 +192,8 @@
         .add-form button:hover {
             background-color: #1e4030;
         }
+
+        /* Responsive Adjustments */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -287,7 +288,6 @@
                 font-size: 0.75rem;
             }
         }
-
     </style>
 </head>
 <body>
@@ -297,9 +297,9 @@
             <div class="details"><div class="role">Quản trị viên</div></div>
         </div>
         <ul>
-            <li class="active"><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.html">Quản lý học phần</a></li>
+            <li><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.html">Quản lý học phần</a></li>
             <li><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.html">Phân công giảng viên</a></li>
-            <li><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.html">Quản lý phòng học</a></li>
+            <li class="active"><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.html">Quản lý phòng học</a></li>
             <li><i class="fas fa-clipboard-list"></i><a href="#">Đăng ký học phần</a></li>
             <li><i class="fas fa-calendar-alt"></i><a href="#">Tra cứu lịch học</a></li>
             <li><i class="fas fa-calendar-check"></i><a href="#">Xem thời khóa biểu</a></li>
@@ -307,40 +307,36 @@
             <li><i class="fas fa-sign-out-alt"></i><a href="#" onclick="dangXuat()">Đăng xuất</a></li>
         </ul>
     </div>
-
     <div class="main">
         <header>
-            <h1>QUẢN LÝ HỌC PHẦN</h1>
+            <h1>QUẢN LÝ PHÒNG HỌC</h1>
             <div class="login">
                 Xin chào, Quản trị viên |
                 <a href="#" style="color: white;" onclick="dangXuat()"><i class="fas fa-sign-out-alt"></i></a>
             </div>
         </header>
-
         <div class="container">
             <div class="add-form">
-                <h3>Thêm học phần mới</h3>
-                <input type="text" id="maHP" placeholder="Mã học phần">
-                <input type="text" id="tenHP" placeholder="Tên học phần">
-                <input type="text" id="soTC" placeholder="Số tín chỉ">
-                <button onclick="themHocPhan()">Thêm</button>
+                <h3>Thêm phòng học mới</h3>
+                <input type="text" id="maPhong" placeholder="Mã phòng học">
+                <input type="text" id="tenPhong" placeholder="Tên phòng học">
+                <input type="text" id="sucChua" placeholder="Sức chứa">
+                <button onclick="themPhongHoc()">Thêm</button>
             </div>
-
-            <table id="bangHocPhan">
+            <table id="bangPhongHoc">
                 <thead>
                     <tr>
-                        <th>Mã học phần</th>
-                        <th>Tên học phần</th>
-                        <th>Số tín chỉ</th>
+                        <th>Mã phòng học</th>
+                        <th>Tên phòng học</th>
+                        <th>Sức chứa</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Dữ liệu mẫu -->
                     <tr>
-                        <td>IT101</td>
-                        <td>Nhập môn lập trình</td>
-                        <td>3</td>
+                        <td>P101</td>
+                        <td>Phòng học A1</td>
+                        <td>50</td>
                         <td class="actions">
                             <button class="edit-btn" onclick="chinhSuaDong(this)">Chỉnh sửa</button>
                             <button class="delete-btn" onclick="xoaDong(this)">Xóa</button>
@@ -350,106 +346,119 @@
             </table>
         </div>
     </div>
-
     <script>
-    // Lấy dữ liệu từ localStorage khi tải trang
-    document.addEventListener('DOMContentLoaded', function () {
-        const data = JSON.parse(localStorage.getItem('hocPhanList')) || [];
-        data.forEach(hp => themDongVaoBang(hp.ma, hp.ten, hp.tc));
-    });
+        // Lấy dữ liệu từ localStorage khi tải trang
+        document.addEventListener('DOMContentLoaded', function () {
+            const data = JSON.parse(localStorage.getItem('phongHocList')) || [];
+            data.forEach(ph => themDongVaoBang(ph.maPhong, ph.tenPhong, ph.sucChua));
+        });
 
-    function dangXuat() {
-        window.location.href = 'Dang_Nhap.html';
-    }
-
-    function themHocPhan() {
-        const ma = document.getElementById('maHP').value.trim();
-        const ten = document.getElementById('tenHP').value.trim();
-        const tc = document.getElementById('soTC').value.trim();
-
-        if (!ma || !ten || !tc) {
-            alert("Vui lòng nhập đầy đủ thông tin.");
-            return;
+        function dangXuat() {
+            window.location.href = 'Dang_Nhap.html';
         }
 
-        // Lưu vào localStorage
-        const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
-        hocPhanList.push({ ma, ten, tc });
-        localStorage.setItem('hocPhanList', JSON.stringify(hocPhanList));
+        function themPhongHoc() {
+            const maPhong = document.getElementById('maPhong').value.trim();
+            const tenPhong = document.getElementById('tenPhong').value.trim();
+            const sucChua = document.getElementById('sucChua').value.trim();
 
-        themDongVaoBang(ma, ten, tc);
-
-        document.getElementById('maHP').value = '';
-        document.getElementById('tenHP').value = '';
-        document.getElementById('soTC').value = '';
-    }
-
-    function themDongVaoBang(ma, ten, tc) {
-        const tbody = document.getElementById('bangHocPhan').querySelector('tbody');
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-            <td>${ma}</td>
-            <td>${ten}</td>
-            <td>${tc}</td>
-            <td class="actions">
-                <button class="edit-btn" onclick="chinhSuaDong(this)">Chỉnh sửa</button>
-                <button class="delete-btn" onclick="xoaDong(this)">Xóa</button>
-            </td>
-        `;
-        tbody.appendChild(newRow);
-    }
-
-    function chinhSuaDong(button) {
-        const row = button.parentElement.parentElement;
-        const cells = row.querySelectorAll('td');
-
-        const ma = cells[0].innerText;
-        const ten = cells[1].innerText;
-        const tc = cells[2].innerText;
-
-        cells[0].innerHTML = `<input type="text" value="${ma}" style="width: 100%;">`;
-        cells[1].innerHTML = `<input type="text" value="${ten}" style="width: 100%;">`;
-        cells[2].innerHTML = `<input type="text" value="${tc}" style="width: 100%;">`;
-
-        button.textContent = 'Lưu';
-        button.onclick = function () {
-            const inputs = row.querySelectorAll('input');
-            const newMa = inputs[0].value.trim();
-            const newTen = inputs[1].value.trim();
-            const newTc = inputs[2].value.trim();
-
-            cells[0].innerText = newMa;
-            cells[1].innerText = newTen;
-            cells[2].innerText = newTc;
-
-            // Cập nhật localStorage
-            const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
-            const index = hocPhanList.findIndex(item => item.ma === ma && item.ten === ten && item.tc === tc);
-            if (index !== -1) {
-                hocPhanList[index] = { ma: newMa, ten: newTen, tc: newTc };
-                localStorage.setItem('hocPhanList', JSON.stringify(hocPhanList));
+            if (!maPhong || !tenPhong || !sucChua) {
+                alert("Vui lòng nhập đầy đủ thông tin.");
+                return;
             }
 
-            this.textContent = 'Chỉnh sửa';
-            this.onclick = () => chinhSuaDong(this);
-        };
-    }
+            if (isNaN(sucChua) || sucChua <= 0) {
+                alert("Sức chứa phải là số dương.");
+                return;
+            }
 
-    function xoaDong(button) {
-        const row = button.parentElement.parentElement;
-        const cells = row.querySelectorAll('td');
-        const ma = cells[0].innerText;
-        const ten = cells[1].innerText;
-        const tc = cells[2].innerText;
+            // Lưu vào localStorage
+            const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
+            phongHocList.push({ maPhong, tenPhong, sucChua });
+            localStorage.setItem('phongHocList', JSON.stringify(phongHocList));
 
-        // Xóa khỏi localStorage
-        let hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
-        hocPhanList = hocPhanList.filter(item => !(item.ma === ma && item.ten === ten && item.tc === tc));
-        localStorage.setItem('hocPhanList', JSON.stringify(hocPhanList));
+            themDongVaoBang(maPhong, tenPhong, sucChua);
 
-        row.remove();
-    }
-</script>
+            document.getElementById('maPhong').value = '';
+            document.getElementById('tenPhong').value = '';
+            document.getElementById('sucChua').value = '';
+        }
 
+        function themDongVaoBang(maPhong, tenPhong, sucChua) {
+            const tbody = document.getElementById('bangPhongHoc').querySelector('tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${maPhong}</td>
+                <td>${tenPhong}</td>
+                <td>${sucChua}</td>
+                <td class="actions">
+                    <button class="edit-btn" onclick="chinhSuaDong(this)">Chỉnh sửa</button>
+                    <button class="delete-btn" onclick="xoaDong(this)">Xóa</button>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+        }
+
+        function chinhSuaDong(button) {
+            const row = button.parentElement.parentElement;
+            const cells = row.querySelectorAll('td');
+
+            const maPhong = cells[0].innerText;
+            const tenPhong = cells[1].innerText;
+            const sucChua = cells[2].innerText;
+
+            cells[0].innerHTML = `<input type="text" value="${maPhong}" style="width: 100%;">`;
+            cells[1].innerHTML = `<input type="text" value="${tenPhong}" style="width: 100%;">`;
+            cells[2].innerHTML = `<input type="text" value="${sucChua}" style="width: 100%;">`;
+
+            button.textContent = 'Lưu';
+            button.onclick = function () {
+                const inputs = row.querySelectorAll('input');
+                const newMaPhong = inputs[0].value.trim();
+                const newTenPhong = inputs[1].value.trim();
+                const newSucChua = inputs[2].value.trim();
+
+                if (!newMaPhong || !newTenPhong || !newSucChua) {
+                    alert("Vui lòng nhập đầy đủ thông tin.");
+                    return;
+                }
+
+                if (isNaN(newSucChua) || newSucChua <= 0) {
+                    alert("Sức chứa phải là số dương.");
+                    return;
+                }
+
+                cells[0].innerText = newMaPhong;
+                cells[1].innerText = newTenPhong;
+                cells[2].innerText = newSucChua;
+
+                // Cập nhật localStorage
+                const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
+                const index = phongHocList.findIndex(item => item.maPhong === maPhong && item.tenPhong === tenPhong && item.sucChua === sucChua);
+                if (index !== -1) {
+                    phongHocList[index] = { maPhong: newMaPhong, tenPhong: newTenPhong, sucChua: newSucChua };
+                    localStorage.setItem('phongHocList', JSON.stringify(phongHocList));
+                }
+
+                this.textContent = 'Chỉnh sửa';
+                this.onclick = () => chinhSuaDong(this);
+            };
+        }
+
+        function xoaDong(button) {
+            const row = button.parentElement.parentElement;
+            const cells = row.querySelectorAll('td');
+            const maPhong = cells[0].innerText;
+            const tenPhong = cells[1].innerText;
+            const sucChua = cells[2].innerText;
+
+            // Xóa khỏi localStorage
+            let phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
+            phongHocList = phongHocList.filter(item => !(item.maPhong === maPhong && item.tenPhong === tenPhong && item.sucChua === sucChua));
+            localStorage.setItem('phongHocList', JSON.stringify(phongHocList));
+
+            row.remove();
+        }
+    </script>
 </body>
 </html>
