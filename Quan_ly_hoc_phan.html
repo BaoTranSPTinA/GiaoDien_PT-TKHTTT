@@ -82,12 +82,11 @@
             border-radius: 4px;
         }
         .sidebar ul li.active a {
-            color: #245139;  /* Thay đổi màu chữ */
+            color: #245139;
         }
         .sidebar ul li.active i {
-            color: #245139;  /* Thay đổi màu chữ */
+            color: #245139;
         }
-
         .main {
             flex: 1;
             display: flex;
@@ -117,23 +116,36 @@
         .container {
             padding: 2rem;
         }
+        .add-form {
+            margin-bottom: 2rem;
+            background-color: #fff;
+            padding: 1rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .add-form input, .add-form select {
+            margin: 0.5rem 1rem 0.5rem 0;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: calc(100% - 1rem);
+        }
+        .add-form button {
+            padding: 8px 16px;
+            background-color: #245139;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .add-form button:hover {
+            background-color: #1e4030;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
             background-color: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        table td input {
-            width: 100%;
-            padding: 0;
-            border: none;
-            background: transparent;
-            font-size: 1rem;
-            font-family: inherit;
-        }
-        table td input:focus {
-            outline: none;
-            border-bottom: 1px solid #245139;
         }
         th, td {
             padding: 12px;
@@ -142,7 +154,7 @@
         }
         th {
             background-color: #245139;
-            color:#fff ;
+            color: #fff;
         }
         .actions .edit-btn {
             margin-right: 5px;
@@ -168,30 +180,16 @@
         .actions .delete-btn:hover {
             background-color: #6f0e0e;
         }
-
-        .add-form {
-            margin-bottom: 2rem;
-            background-color: #fff;
-            padding: 1rem;
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .add-form input {
-            margin: 0.5rem 1rem 0.5rem 0;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .add-form button {
-            padding: 8px 16px;
-            background-color: #245139;
-            color: white;
+        .actions .publish-btn {
+            padding: 5px 10px;
             border: none;
-            border-radius: 4px;
+            background-color: #28a745;
+            color: white;
             cursor: pointer;
+            border-radius: 4px;
         }
-        .add-form button:hover {
-            background-color: #1e4030;
+        .actions .publish-btn:hover {
+            background-color: #218838;
         }
         @media (max-width: 768px) {
             body {
@@ -233,7 +231,7 @@
             .add-form {
                 padding: 0.5rem;
             }
-            .add-form input {
+            .add-form input, .add-form select {
                 width: 100%;
                 margin: 0.25rem 0;
             }
@@ -248,13 +246,11 @@
                 flex-wrap: wrap;
                 gap: 5px;
             }
-            .actions .edit-btn,
-            .actions .delete-btn {
+            .actions .edit-btn, .actions .delete-btn, .actions .publish-btn {
                 padding: 4px 8px;
                 font-size: 0.85rem;
             }
         }
-
         @media (max-width: 480px) {
             .sidebar {
                 padding: 5px;
@@ -281,13 +277,11 @@
             th, td {
                 padding: 6px;
             }
-            .actions .edit-btn,
-            .actions .delete-btn {
+            .actions .edit-btn, .actions .delete-btn, .actions .publish-btn {
                 padding: 3px 6px;
                 font-size: 0.75rem;
             }
         }
-
     </style>
 </head>
 <body>
@@ -300,14 +294,12 @@
             <li class="active"><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.html">Quản lý học phần</a></li>
             <li><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.html">Phân công giảng viên</a></li>
             <li><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.html">Quản lý phòng học</a></li>
-            <li><i class="fas fa-clipboard-list"></i><a href="#">Đăng ký học phần</a></li>
+            <li><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.html">Đăng ký học phần</a></li>
             <li><i class="fas fa-calendar-alt"></i><a href="#">Tra cứu lịch học</a></li>
             <li><i class="fas fa-calendar-check"></i><a href="#">Xem thời khóa biểu</a></li>
-            <li><i class="fas fa-users-cog"></i><a href="#">Quản lý lớp học phần</a></li>
             <li><i class="fas fa-sign-out-alt"></i><a href="#" onclick="dangXuat()">Đăng xuất</a></li>
         </ul>
     </div>
-
     <div class="main">
         <header>
             <h1>QUẢN LÝ HỌC PHẦN</h1>
@@ -316,140 +308,765 @@
                 <a href="#" style="color: white;" onclick="dangXuat()"><i class="fas fa-sign-out-alt"></i></a>
             </div>
         </header>
-
         <div class="container">
             <div class="add-form">
-                <h3>Thêm học phần mới</h3>
-                <input type="text" id="maHP" placeholder="Mã học phần">
-                <input type="text" id="tenHP" placeholder="Tên học phần">
-                <input type="text" id="soTC" placeholder="Số tín chỉ">
+                <h3>Thêm học phần</h3>
+                <input type="text" id="maHP" placeholder="Mã học phần (VD: IT101)" pattern="[A-Z0-9]+" required>
+                <input type="text" id="tenHP" placeholder="Tên học phần" required>
+                <input type="number" id="soTinChi" placeholder="Số tín chỉ (VD: 3)" min="1" required>
+                <input type="number" id="siSoToiDa" placeholder="Sĩ số tối đa (VD: 40)" min="1" required>
+                <select id="dieuKienTienQuyet">
+                    <option value="" selected>Không có điều kiện tiên quyết</option>
+                </select>
+                <select id="khoa" required>
+                    <option value="" disabled selected>Chọn khoa</option>
+                </select>
+                <select id="nganh" required>
+                    <option value="" disabled selected>Chọn ngành</option>
+                </select>
+                <select id="hocKy" required>
+                    <option value="" disabled selected>Chọn học kỳ</option>
+                </select>
+                <select id="giangVien" required>
+                    <option value="" disabled selected>Chọn giảng viên</option>
+                </select>
+                <select id="toaNha" required>
+                    <option value="" disabled selected>Chọn tòa nhà</option>
+                </select>
+                <select id="maPhong" required>
+                    <option value="" disabled selected>Chọn phòng học</option>
+                </select>
+                <select id="thu" required>
+                    <option value="" disabled selected>Chọn thứ</option>
+                    <option value="2">Thứ 2</option>
+                    <option value="3">Thứ 3</option>
+                    <option value="4">Thứ 4</option>
+                    <option value="5">Thứ 5</option>
+                    <option value="6">Thứ 6</option>
+                    <option value="7">Thứ 7</option>
+                    <option value="8">Chủ nhật</option>
+                </select>
+                <select id="tietBatDau" required>
+                    <option value="" disabled selected>Chọn tiết bắt đầu</option>
+                    <option value="1">Tiết 1 (6:30 - 7:20)</option>
+                    <option value="2">Tiết 2 (7:20 - 8:10)</option>
+                    <option value="3">Tiết 3 (8:10 - 9:00)</option>
+                    <option value="4">Tiết 4 (9:00 - 9:50)</option>
+                    <option value="5">Tiết 5 (9:50 - 10:40)</option>
+                    <option value="6">Tiết 6 (10:40 - 11:30)</option>
+                    <option value="7">Tiết 7 (12:00 - 12:50)</option>
+                    <option value="8">Tiết 8 (12:50 - 13:40)</option>
+                    <option value="9">Tiết 9 (13:40 - 14:30)</option>
+                    <option value="10">Tiết 10 (14:30 - 15:20)</option>
+                    <option value="11">Tiết 11 (15:20 - 16:10)</option>
+                    <option value="12">Tiết 12 (16:10 - 17:00)</option>
+                </select>
+                <select id="tietKetThuc" required>
+                    <option value="" disabled selected>Chọn tiết kết thúc</option>
+                    <option value="1">Tiết 1 (6:30 - 7:20)</option>
+                    <option value="2">Tiết 2 (7:20 - 8:10)</option>
+                    <option value="3">Tiết 3 (8:10 - 9:00)</option>
+                    <option value="4">Tiết 4 (9:00 - 9:50)</option>
+                    <option value="5">Tiết 5 (9:50 - 10:40)</option>
+                    <option value="6">Tiết 6 (10:40 - 11:30)</option>
+                    <option value="7">Tiết 7 (12:00 - 12:50)</option>
+                    <option value="8">Tiết 8 (12:50 - 13:40)</option>
+                    <option value="9">Tiết 9 (13:40 - 14:30)</option>
+                    <option value="10">Tiết 10 (14:30 - 15:20)</option>
+                    <option value="11">Tiết 11 (15:20 - 16:10)</option>
+                    <option value="12">Tiết 12 (16:10 - 17:00)</option>
+                </select>
                 <button onclick="themHocPhan()">Thêm</button>
             </div>
-
             <table id="bangHocPhan">
                 <thead>
                     <tr>
                         <th>Mã học phần</th>
                         <th>Tên học phần</th>
                         <th>Số tín chỉ</th>
+                        <th>Sĩ số tối đa</th>
+                        <th>Điều kiện tiên quyết</th>
+                        <th>Khoa</th>
+                        <th>Ngành</th>
+                        <th>Học kỳ</th>
+                        <th>Giảng viên</th>
+                        <th>Phòng học</th>
+                        <th>Thời gian</th>
+                        <th>Trạng thái</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Dữ liệu mẫu -->
-                    <tr>
-                        <td>IT101</td>
-                        <td>Nhập môn lập trình</td>
-                        <td>3</td>
-                        <td class="actions">
-                            <button class="edit-btn" onclick="chinhSuaDong(this)">Chỉnh sửa</button>
-                            <button class="delete-btn" onclick="xoaDong(this)">Xóa</button>
-                        </td>
-                    </tr>
+                    <!-- Dữ liệu sẽ được thêm động -->
                 </tbody>
             </table>
         </div>
     </div>
-
     <script>
-    // Lấy dữ liệu từ localStorage khi tải trang
-    document.addEventListener('DOMContentLoaded', function () {
-        const data = JSON.parse(localStorage.getItem('hocPhanList')) || [];
-        data.forEach(hp => themDongVaoBang(hp.ma, hp.ten, hp.tc));
-    });
+        document.addEventListener('DOMContentLoaded', function () {
+            loadKhoa();
+            loadNganh();
+            loadHocKy();
+            loadGiangVien();
+            loadToaNha();
+            loadPhongHoc();
+            loadDieuKienTienQuyet();
+            loadHocPhan();
+        });
 
-    function dangXuat() {
-        window.location.href = 'Dang_Nhap.html';
-    }
-
-    function themHocPhan() {
-        const ma = document.getElementById('maHP').value.trim();
-        const ten = document.getElementById('tenHP').value.trim();
-        const tc = document.getElementById('soTC').value.trim();
-
-        if (!ma || !ten || !tc) {
-            alert("Vui lòng nhập đầy đủ thông tin.");
-            return;
+        function loadKhoa() {
+            const khoaList = JSON.parse(localStorage.getItem('khoaList')) || [];
+            const selectKhoa = document.getElementById('khoa');
+            selectKhoa.innerHTML = '<option value="" disabled selected>Chọn khoa</option>';
+            khoaList.forEach(khoa => {
+                const option = document.createElement('option');
+                option.value = khoa.maKhoa;
+                option.text = khoa.tenKhoa;
+                selectKhoa.appendChild(option);
+            });
         }
 
-        // Lưu vào localStorage
-        const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
-        hocPhanList.push({ ma, ten, tc });
-        localStorage.setItem('hocPhanList', JSON.stringify(hocPhanList));
+        function loadNganh() {
+            const nganhList = JSON.parse(localStorage.getItem('nganhList')) || [];
+            const selectNganh = document.getElementById('nganh');
+            selectNganh.innerHTML = '<option value="" disabled selected>Chọn ngành</option>';
+            const selectedKhoa = document.getElementById('khoa').value;
+            nganhList.filter(nganh => !selectedKhoa || nganh.maKhoa === selectedKhoa).forEach(nganh => {
+                const option = document.createElement('option');
+                option.value = nganh.maNganh;
+                option.text = nganh.tenNganh;
+                selectNganh.appendChild(option);
+            });
+        }
 
-        themDongVaoBang(ma, ten, tc);
+        function loadHocKy() {
+            const dangKyHocPhanList = JSON.parse(localStorage.getItem('dangKyHocPhanList')) || [];
+            const hocKyList = [...new Set(dangKyHocPhanList.map(dk => dk.hocKy))];
+            const selectHocKy = document.getElementById('hocKy');
+            selectHocKy.innerHTML = '<option value="" disabled selected>Chọn học kỳ</option>';
+            hocKyList.forEach(hocKy => {
+                const option = document.createElement('option');
+                option.value = hocKy;
+                option.text = hocKy;
+                selectHocKy.appendChild(option);
+            });
+        }
 
-        document.getElementById('maHP').value = '';
-        document.getElementById('tenHP').value = '';
-        document.getElementById('soTC').value = '';
-    }
+        function loadGiangVien() {
+            const phanCongList = JSON.parse(localStorage.getItem('phanCongList')) || [];
+            const giangVienList = [...new Set(phanCongList.map(pc => pc.giangVien))];
+            const selectGiangVien = document.getElementById('giangVien');
+            selectGiangVien.innerHTML = '<option value="" disabled selected>Chọn giảng viên</option>';
+            giangVienList.forEach(gv => {
+                const option = document.createElement('option');
+                option.value = gv;
+                option.text = gv;
+                selectGiangVien.appendChild(option);
+            });
+        }
 
-    function themDongVaoBang(ma, ten, tc) {
-        const tbody = document.getElementById('bangHocPhan').querySelector('tbody');
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-            <td>${ma}</td>
-            <td>${ten}</td>
-            <td>${tc}</td>
-            <td class="actions">
-                <button class="edit-btn" onclick="chinhSuaDong(this)">Chỉnh sửa</button>
-                <button class="delete-btn" onclick="xoaDong(this)">Xóa</button>
-            </td>
-        `;
-        tbody.appendChild(newRow);
-    }
+        function loadToaNha() {
+            const toaNhaList = JSON.parse(localStorage.getItem('toaNhaList')) || [];
+            const selectToaNha = document.getElementById('toaNha');
+            selectToaNha.innerHTML = '<option value="" disabled selected>Chọn tòa nhà</option>';
+            toaNhaList.forEach(toa => {
+                const option = document.createElement('option');
+                option.value = toa.maToa;
+                option.text = toa.tenToa;
+                selectToaNha.appendChild(option);
+            });
+        }
 
-    function chinhSuaDong(button) {
-        const row = button.parentElement.parentElement;
-        const cells = row.querySelectorAll('td');
+        function loadPhongHoc() {
+            const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
+            const selectPhongHoc = document.getElementById('maPhong');
+            selectPhongHoc.innerHTML = '<option value="" disabled selected>Chọn phòng học</option>';
+            const selectedToaNha = document.getElementById('toaNha').value;
+            phongHocList.filter(ph => !selectedToaNha || ph.toaNha === selectedToaNha).forEach(ph => {
+                const option = document.createElement('option');
+                option.value = ph.maPhong;
+                option.text = `${ph.maPhong} - ${ph.tenPhong}`;
+                selectPhongHoc.appendChild(option);
+            });
+        }
 
-        const ma = cells[0].innerText;
-        const ten = cells[1].innerText;
-        const tc = cells[2].innerText;
-
-        cells[0].innerHTML = `<input type="text" value="${ma}" style="width: 100%;">`;
-        cells[1].innerHTML = `<input type="text" value="${ten}" style="width: 100%;">`;
-        cells[2].innerHTML = `<input type="text" value="${tc}" style="width: 100%;">`;
-
-        button.textContent = 'Lưu';
-        button.onclick = function () {
-            const inputs = row.querySelectorAll('input');
-            const newMa = inputs[0].value.trim();
-            const newTen = inputs[1].value.trim();
-            const newTc = inputs[2].value.trim();
-
-            cells[0].innerText = newMa;
-            cells[1].innerText = newTen;
-            cells[2].innerText = newTc;
-
-            // Cập nhật localStorage
+        function loadDieuKienTienQuyet() {
             const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
-            const index = hocPhanList.findIndex(item => item.ma === ma && item.ten === ten && item.tc === tc);
-            if (index !== -1) {
-                hocPhanList[index] = { ma: newMa, ten: newTen, tc: newTc };
-                localStorage.setItem('hocPhanList', JSON.stringify(hocPhanList));
+            const selectDieuKien = document.getElementById('dieuKienTienQuyet');
+            selectDieuKien.innerHTML = '<option value="" selected>Không có điều kiện tiên quyết</option>';
+            hocPhanList.forEach(hp => {
+                const option = document.createElement('option');
+                option.value = hp.ma;
+                option.text = `${hp.ma} - ${hp.ten}`;
+                selectDieuKien.appendChild(option);
+            });
+        }
+
+        document.getElementById('khoa').addEventListener('change', loadNganh);
+        document.getElementById('toaNha').addEventListener('change', loadPhongHoc);
+        document.getElementById('maHP').addEventListener('change', function () {
+            const maHP = this.value.trim();
+            const selectDieuKien = document.getElementById('dieuKienTienQuyet');
+            const options = selectDieuKien.querySelectorAll('option');
+            options.forEach(option => {
+                option.disabled = option.value === maHP;
+            });
+        });
+
+        function themHocPhan() {
+            const maHP = document.getElementById('maHP').value.trim();
+            const tenHP = document.getElementById('tenHP').value.trim();
+            const soTinChi = document.getElementById('soTinChi').value;
+            const siSoToiDa = document.getElementById('siSoToiDa').value;
+            const dieuKienTienQuyet = document.getElementById('dieuKienTienQuyet').value;
+            const khoa = document.getElementById('khoa').value;
+            const nganh = document.getElementById('nganh').value;
+            const hocKy = document.getElementById('hocKy').value;
+            const giangVien = document.getElementById('giangVien').value;
+            const toaNha = document.getElementById('toaNha').value;
+            const maPhong = document.getElementById('maPhong').value;
+            const thu = document.getElementById('thu').value;
+            const tietBatDau = document.getElementById('tietBatDau').value;
+            const tietKetThuc = document.getElementById('tietKetThuc').value;
+
+            if (!maHP || !tenHP || !soTinChi || !siSoToiDa || !khoa || !nganh || !hocKy || !giangVien || !toaNha || !maPhong || !thu || !tietBatDau || !tietKetThuc) {
+                alert("Vui lòng nhập đầy đủ thông tin.");
+                return;
             }
 
-            this.textContent = 'Chỉnh sửa';
-            this.onclick = () => chinhSuaDong(this);
-        };
-    }
+            if (!/^[A-Z0-9]+$/.test(maHP)) {
+                alert("Mã học phần chỉ được chứa chữ cái in hoa và số.");
+                return;
+            }
 
-    function xoaDong(button) {
-        const row = button.parentElement.parentElement;
-        const cells = row.querySelectorAll('td');
-        const ma = cells[0].innerText;
-        const ten = cells[1].innerText;
-        const tc = cells[2].innerText;
+            if (isNaN(soTinChi) || soTinChi <= 0) {
+                alert("Số tín chỉ phải là số dương.");
+                return;
+            }
 
-        // Xóa khỏi localStorage
-        let hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
-        hocPhanList = hocPhanList.filter(item => !(item.ma === ma && item.ten === ten && item.tc === tc));
-        localStorage.setItem('hocPhanList', JSON.stringify(hocPhanList));
+            if (isNaN(siSoToiDa) || siSoToiDa <= 0) {
+                alert("Sĩ số tối đa phải là số dương.");
+                return;
+            }
 
-        row.remove();
-    }
-</script>
+            if (dieuKienTienQuyet === maHP) {
+                alert("Học phần không thể là điều kiện tiên quyết của chính nó.");
+                return;
+            }
 
+            if (parseInt(tietKetThuc) < parseInt(tietBatDau)) {
+                alert("Tiết kết thúc phải lớn hơn hoặc bằng tiết bắt đầu.");
+                return;
+            }
+
+            const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
+            const phongHoc = phongHocList.find(ph => ph.maPhong === maPhong);
+            if (phongHoc && parseInt(siSoToiDa) > phongHoc.sucChua) {
+                alert(`Sĩ số tối đa (${siSoToiDa}) vượt quá sức chứa của phòng (${phongHoc.sucChua}).`);
+                return;
+            }
+
+            const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
+            if (hocPhanList.some(hp => hp.ma === maHP && hp.hocKy === hocKy)) {
+                alert("Học phần này đã tồn tại trong học kỳ này.");
+                return;
+            }
+
+            const phanCongList = JSON.parse(localStorage.getItem('phanCongList')) || [];
+            const conflictGiangVien = phanCongList.some(pc =>
+                pc.giangVien === giangVien &&
+                pc.hocKy === hocKy &&
+                pc.thu === thu &&
+                (parseInt(pc.tietBatDau) <= parseInt(tietKetThuc) && parseInt(pc.tietKetThuc) >= parseInt(tietBatDau))
+            );
+            if (conflictGiangVien) {
+                alert("Giảng viên này đã có lịch dạy trùng trong khoảng thời gian này.");
+                return;
+            }
+
+            const dangKyHocPhanList = JSON.parse(localStorage.getItem('dangKyHocPhanList')) || [];
+            const conflictPhong = dangKyHocPhanList.some(dk =>
+                dk.toaNha === toaNha &&
+                dk.maPhong === maPhong &&
+                dk.hocKy === hocKy &&
+                dk.thu === thu &&
+                (parseInt(dk.tietBatDau) <= parseInt(tietKetThuc) && parseInt(dk.tietKetThuc) >= parseInt(tietBatDau))
+            );
+            if (conflictPhong) {
+                alert("Phòng học đã được sử dụng trong khoảng thời gian này.");
+                return;
+            }
+
+            hocPhanList.push({
+                ma: maHP,
+                ten: tenHP,
+                soTinChi: parseInt(soTinChi),
+                siSoToiDa: parseInt(siSoToiDa),
+                dieuKienTienQuyet: dieuKienTienQuyet || null,
+                khoa,
+                nganh,
+                hocKy,
+                giangVien,
+                toaNha,
+                maPhong,
+                thu,
+                tietBatDau,
+                tietKetThuc,
+                trangThai: 'Chưa công bố'
+            });
+            localStorage.setItem('hocPhanList', JSON.stringify(hocPhanList));
+
+            dangKyHocPhanList.push({
+                maHP,
+                khoa,
+                nganh,
+                toaNha,
+                maPhong,
+                hocKy,
+                thu,
+                tietBatDau,
+                tietKetThuc,
+                siSo: parseInt(siSoToiDa)
+            });
+            localStorage.setItem('dangKyHocPhanList', JSON.stringify(dangKyHocPhanList));
+
+            phanCongList.push({
+                maHP,
+                hocKy,
+                giangVien,
+                thu,
+                tietBatDau,
+                tietKetThuc
+            });
+            localStorage.setItem('phanCongList', JSON.stringify(phanCongList));
+
+            loadHocPhan();
+            loadDieuKienTienQuyet();
+
+            document.getElementById('maHP').value = '';
+            document.getElementById('tenHP').value = '';
+            document.getElementById('soTinChi').value = '';
+            document.getElementById('siSoToiDa').value = '';
+            document.getElementById('dieuKienTienQuyet').value = '';
+            document.getElementById('khoa').value = '';
+            document.getElementById('nganh').value = '';
+            document.getElementById('hocKy').value = '';
+            document.getElementById('giangVien').value = '';
+            document.getElementById('toaNha').value = '';
+            document.getElementById('maPhong').value = '';
+            document.getElementById('thu').value = '';
+            document.getElementById('tietBatDau').value = '';
+            document.getElementById('tietKetThuc').value = '';
+            loadNganh();
+            loadPhongHoc();
+        }
+
+        function loadHocPhan() {
+            const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
+            const khoaList = JSON.parse(localStorage.getItem('khoaList')) || [];
+            const nganhList = JSON.parse(localStorage.getItem('nganhList')) || [];
+            const toaNhaList = JSON.parse(localStorage.getItem('toaNhaList')) || [];
+            const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
+
+            const tbody = document.getElementById('bangHocPhan').querySelector('tbody');
+            tbody.innerHTML = '';
+
+            hocPhanList.forEach(hp => {
+                const tenKhoa = khoaList.find(k => k.maKhoa === hp.khoa)?.tenKhoa || hp.khoa;
+                const tenNganh = nganhList.find(n => n.maNganh === hp.nganh)?.tenNganh || hp.nganh;
+                const tenToa = toaNhaList.find(t => t.maToa === hp.toaNha)?.tenToa || hp.toaNha;
+                const phong = phongHocList.find(p => p.maPhong === hp.maPhong);
+                const tenPhong = phong ? `${hp.maPhong} - ${phong.tenPhong}` : hp.maPhong;
+
+                const thuText = {
+                    '2': 'Thứ 2', '3': 'Thứ 3', '4': 'Thứ 4', '5': 'Thứ 5',
+                    '6': 'Thứ 6', '7': 'Thứ 7', '8': 'Chủ nhật'
+                }[hp.thu];
+
+                const tietTime = {
+                    '1': '6:30 - 7:20', '2': '7:20 - 8:10', '3': '8:10 - 9:00', '4': '9:00 - 9:50',
+                    '5': '9:50 - 10:40', '6': '10:40 - 11:30', '7': '12:00 - 12:50', '8': '12:50 - 13:40',
+                    '9': '13:40 - 14:30', '10': '14:30 - 15:20', '11': '15:20 - 16:10', '12': '16:10 - 17:00'
+                };
+
+                const thoiGian = `${thuText}, Tiết ${hp.tietBatDau} - ${hp.tietKetThuc} (${tietTime[hp.tietBatDau].split(' - ')[0]} - ${tietTime[hp.tietKetThuc].split(' - ')[1]})`;
+
+                const dieuKienText = hp.dieuKienTienQuyet ? hocPhanList.find(h => h.ma === hp.dieuKienTienQuyet)?.ten || hp.dieuKienTienQuyet : 'Không có';
+
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${hp.ma}</td>
+                    <td>${hp.ten}</td>
+                    <td>${hp.soTinChi}</td>
+                    <td>${hp.siSoToiDa}</td>
+                    <td>${dieuKienText}</td>
+                    <td>${tenKhoa}</td>
+                    <td>${tenNganh}</td>
+                    <td>${hp.hocKy}</td>
+                    <td>${hp.giangVien}</td>
+                    <td>${tenToa} - ${tenPhong}</td>
+                    <td>${thoiGian}</td>
+                    <td>${hp.trangThai}</td>
+                    <td class="actions">
+                        <button class="edit-btn" onclick="chinhSuaHocPhan(this)">Chỉnh sửa</button>
+                        <button class="delete-btn" onclick="xoaHocPhan('${hp.ma}', '${hp.hocKy}')">Xóa</button>
+                        ${hp.trangThai === 'Chưa công bố' ? 
+                            `<button class="publish-btn" onclick="congBoHocPhan('${hp.ma}', '${hp.hocKy}')">Công bố</button>` : 
+                            `<button class="publish-btn" disabled>Đã công bố</button>`}
+                    </td>
+                `;
+                tbody.appendChild(newRow);
+            });
+        }
+
+        function chinhSuaHocPhan(button) {
+            const row = button.parentElement.parentElement;
+            const cells = row.querySelectorAll('td');
+            const maHP = cells[0].innerText;
+            const tenHP = cells[1].innerText;
+            const soTinChi = cells[2].innerText;
+            const siSoToiDa = cells[3].innerText;
+            const dieuKienTienQuyetText = cells[4].innerText;
+            const khoaText = cells[5].innerText;
+            const nganhText = cells[6].innerText;
+            const hocKy = cells[7].innerText;
+            const giangVien = cells[8].innerText;
+            const phongText = cells[9].innerText.split(' - ')[0];
+            const thoiGian = cells[10].innerText;
+            const trangThai = cells[11].innerText;
+
+            const khoaList = JSON.parse(localStorage.getItem('khoaList')) || [];
+            const nganhList = JSON.parse(localStorage.getItem('nganhList')) || [];
+            const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
+            const phanCongList = JSON.parse(localStorage.getItem('phanCongList')) || [];
+            const toaNhaList = JSON.parse(localStorage.getItem('toaNhaList')) || [];
+            const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
+
+            const hp = hocPhanList.find(h => h.ma === maHP && h.hocKy === hocKy);
+            const maKhoa = khoaList.find(k => k.tenKhoa === khoaText)?.maKhoa || hp.khoa;
+            const maNganh = nganhList.find(n => n.tenNganh === nganhText)?.maNganh || hp.nganh;
+            const maToa = toaNhaList.find(t => t.tenToa === phongText.split(' - ')[0])?.maToa || hp.toaNha;
+            const maPhong = hp.maPhong;
+            const thuText = thoiGian.split(', ')[0];
+            const tietText = thoiGian.split(', ')[1].split(' (')[0].split(' - ');
+            const tietBatDau = tietText[0].split(' ')[1];
+            const tietKetThuc = tietText[1];
+
+            const thuValue = {
+                'Thứ 2': '2', 'Thứ 3': '3', 'Thứ 4': '4', 'Thứ 5': '5',
+                'Thứ 6': '6', 'Thứ 7': '7', 'Chủ nhật': '8'
+            }[thuText];
+
+            let khoaOptions = '<option value="" disabled>Chọn khoa</option>';
+            khoaList.forEach(khoa => {
+                const selected = khoa.maKhoa === maKhoa ? 'selected' : '';
+                khoaOptions += `<option value="${khoa.maKhoa}" ${selected}>${khoa.tenKhoa}</option>`;
+            });
+
+            let nganhOptions = '<option value="" disabled>Chọn ngành</option>';
+            nganhList.filter(nganh => !maKhoa || nganh.maKhoa === maKhoa).forEach(nganh => {
+                const selected = nganh.maNganh === maNganh ? 'selected' : '';
+                nganhOptions += `<option value="${nganh.maNganh}" ${selected}>${nganh.tenNganh}</option>`;
+            });
+
+            let dieuKienOptions = '<option value="">Không có điều kiện tiên quyết</option>';
+            hocPhanList.forEach(h => {
+                const selected = h.ma === hp.dieuKienTienQuyet ? 'selected' : '';
+                const disabled = h.ma === maHP ? 'disabled' : '';
+                dieuKienOptions += `<option value="${h.ma}" ${selected} ${disabled}>${h.ma} - ${h.ten}</option>`;
+            });
+
+            let hocKyOptions = '<option value="" disabled>Chọn học kỳ</option>';
+            const hocKyList = [...new Set(hocPhanList.map(h => h.hocKy))];
+            hocKyList.forEach(hk => {
+                const selected = hk === hocKy ? 'selected' : '';
+                hocKyOptions += `<option value="${hk}" ${selected}>${hk}</option>`;
+            });
+
+            let giangVienOptions = '<option value="" disabled>Chọn giảng viên</option>';
+            const giangVienList = [...new Set(phanCongList.map(pc => pc.giangVien))];
+            giangVienList.forEach(gv => {
+                const selected = gv === giangVien ? 'selected' : '';
+                giangVienOptions += `<option value="${gv}" ${selected}>${gv}</option>`;
+            });
+
+            let toaNhaOptions = '<option value="" disabled>Chọn tòa nhà</option>';
+            toaNhaList.forEach(toa => {
+                const selected = toa.maToa === maToa ? 'selected' : '';
+                toaNhaOptions += `<option value="${toa.maToa}" ${selected}>${toa.tenToa}</option>`;
+            });
+
+            let phongOptions = '<option value="" disabled>Chọn phòng học</option>';
+            phongHocList.filter(ph => !maToa || ph.toaNha === maToa).forEach(ph => {
+                const selected = ph.maPhong === maPhong ? 'selected' : '';
+                phongOptions += `<option value="${ph.maPhong}" ${selected}>${ph.maPhong} - ${ph.tenPhong}</option>`;
+            });
+
+            let thuOptions = '<option value="" disabled>Chọn thứ</option>';
+            const thuList = [
+                { value: '2', text: 'Thứ 2' }, { value: '3', text: 'Thứ 3' }, { value: '4', text: 'Thứ 4' },
+                { value: '5', text: 'Thứ 5' }, { value: '6', text: 'Thứ 6' }, { value: '7', text: 'Thứ 7' },
+                { value: '8', text: 'Chủ nhật' }
+            ];
+            thuList.forEach(thu => {
+                const selected = thu.value === thuValue ? 'selected' : '';
+                thuOptions += `<option value="${thu.value}" ${selected}>${thu.text}</option>`;
+            });
+
+            const tietList = [
+                { value: '1', text: 'Tiết 1 (6:30 - 7:20)' }, { value: '2', text: 'Tiết 2 (7:20 - 8:10)' },
+                { value: '3', text: 'Tiết 3 (8:10 - 9:00)' }, { value: '4', text: 'Tiết 4 (9:00 - 9:50)' },
+                { value: '5', text: 'Tiết 5 (9:50 - 10:40)' }, { value: '6', text: 'Tiết 6 (10:40 - 11:30)' },
+                { value: '7', text: 'Tiết 7 (12:00 - 12:50)' }, { value: '8', text: 'Tiết 8 (12:50 - 13:40)' },
+                { value: '9', text: 'Tiết 9 (13:40 - 14:30)' }, { value: '10', text: 'Tiết 10 (14:30 - 15:20)' },
+                { value: '11', text: 'Tiết 11 (15:20 - 16:10)' }, { value: '12', text: 'Tiết 12 (16:10 - 17:00)' }
+            ];
+            let tietBatDauOptions = '<option value="" disabled>Chọn tiết bắt đầu</option>';
+            let tietKetThucOptions = '<option value="" disabled>Chọn tiết kết thúc</option>';
+            tietList.forEach(tiet => {
+                const selectedBatDau = tiet.value === tietBatDau ? 'selected' : '';
+                const selectedKetThuc = tiet.value === tietKetThuc ? 'selected' : '';
+                tietBatDauOptions += `<option value="${tiet.value}" ${selectedBatDau}>${tiet.text}</option>`;
+                tietKetThucOptions += `<option value="${tiet.value}" ${selectedKetThuc}>${tiet.text}</option>`;
+            });
+
+            cells[0].innerHTML = `<input type="text" value="${maHP}" pattern="[A-Z0-9]+" required>`;
+            cells[1].innerHTML = `<input type="text" value="${tenHP}" required>`;
+            cells[2].innerHTML = `<input type="number" value="${soTinChi}" min="1" required>`;
+            cells[3].innerHTML = `<input type="number" value="${siSoToiDa}" min="1" required>`;
+            cells[4].innerHTML = `<select id="editDieuKien">${dieuKienOptions}</select>`;
+            cells[5].innerHTML = `<select id="editKhoa">${khoaOptions}</select>`;
+            cells[6].innerHTML = `<select id="editNganh">${nganhOptions}</select>`;
+            cells[7].innerHTML = `<select id="editHocKy">${hocKyOptions}</select>`;
+            cells[8].innerHTML = `<select id="editGiangVien">${giangVienOptions}</select>`;
+            cells[9].innerHTML = `
+                <select id="editToaNha">${toaNhaOptions}</select>
+                <select id="editMaPhong">${phongOptions}</select>
+            `;
+            cells[10].innerHTML = `
+                <select id="editThu">${thuOptions}</select>
+                <select id="editTietBatDau">${tietBatDauOptions}</select>
+                <select id="editTietKetThuc">${tietKetThucOptions}</select>
+            `;
+
+            const updateNganh = () => {
+                const selectedKhoa = document.getElementById('editKhoa').value;
+                const editNganh = document.getElementById('editNganh');
+                editNganh.innerHTML = '<option value="" disabled selected>Chọn ngành</option>';
+                nganhList.filter(nganh => !selectedKhoa || nganh.maKhoa === selectedKhoa).forEach(nganh => {
+                    const option = document.createElement('option');
+                    option.value = nganh.maNganh;
+                    option.text = nganh.tenNganh;
+                    editNganh.appendChild(option);
+                });
+            };
+
+            const updatePhongHoc = () => {
+                const selectedToaNha = document.getElementById('editToaNha').value;
+                const editMaPhong = document.getElementById('editMaPhong');
+                editMaPhong.innerHTML = '<option value="" disabled selected>Chọn phòng học</option>';
+                phongHocList.filter(ph => !selectedToaNha || ph.toaNha === selectedToaNha).forEach(ph => {
+                    const option = document.createElement('option');
+                    option.value = ph.maPhong;
+                    option.text = `${ph.maPhong} - ${ph.tenPhong}`;
+                    editMaPhong.appendChild(option);
+                });
+            };
+
+            document.getElementById('editKhoa').addEventListener('change', updateNganh);
+            document.getElementById('editToaNha').addEventListener('change', updatePhongHoc);
+
+            button.textContent = 'Lưu';
+            button.onclick = function () {
+                const newMaHP = cells[0].querySelector('input').value.trim();
+                const newTenHP = cells[1].querySelector('input').value.trim();
+                const newSoTinChi = cells[2].querySelector('input').value;
+                const newSiSoToiDa = cells[3].querySelector('input').value;
+                const newDieuKien = cells[4].querySelector('select').value;
+                const newKhoa = cells[5].querySelector('select').value;
+                const newNganh = cells[6].querySelector('select').value;
+                const newHocKy = cells[7].querySelector('select').value;
+                const newGiangVien = cells[8].querySelector('select').value;
+                const newToaNha = cells[9].querySelector('#editToaNha').value;
+                const newMaPhong = cells[9].querySelector('#editMaPhong').value;
+                const newThu = cells[10].querySelector('#editThu').value;
+                const newTietBatDau = cells[10].querySelector('#editTietBatDau').value;
+                const newTietKetThuc = cells[10].querySelector('#editTietKetThuc').value;
+
+                if (!newMaHP || !newTenHP || !newSoTinChi || !newSiSoToiDa || !newKhoa || !newNganh || !newHocKy || !newGiangVien || !newToaNha || !newMaPhong || !newThu || !newTietBatDau || !newTietKetThuc) {
+                    alert("Vui lòng nhập đầy đủ thông tin.");
+                    return;
+                }
+
+                if (!/^[A-Z0-9]+$/.test(newMaHP)) {
+                    alert("Mã học phần chỉ được chứa chữ cái in hoa và số.");
+                    return;
+                }
+
+                if (isNaN(newSoTinChi) || newSoTinChi <= 0) {
+                    alert("Số tín chỉ phải là số dương.");
+                    return;
+                }
+
+                if (isNaN(newSiSoToiDa) || newSiSoToiDa <= 0) {
+                    alert("Sĩ số tối đa phải là số dương.");
+                    return;
+                }
+
+                if (newDieuKien === newMaHP) {
+                    alert("Học phần không thể là điều kiện tiên quyết của chính nó.");
+                    return;
+                }
+
+                if (parseInt(newTietKetThuc) < parseInt(newTietBatDau)) {
+                    alert("Tiết kết thúc phải lớn hơn hoặc bằng tiết bắt đầu.");
+                    return;
+                }
+
+                const phongHoc = phongHocList.find(ph => ph.maPhong === newMaPhong);
+                if (phongHoc && parseInt(newSiSoToiDa) > phongHoc.sucChua) {
+                    alert(`Sĩ số tối đa (${newSiSoToiDa}) vượt quá sức chứa của phòng (${phongHoc.sucChua}).`);
+                    return;
+                }
+
+                const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
+                if (hocPhanList.some(hp => hp.ma === newMaHP && hp.hocKy === newHocKy && (hp.ma !== maHP || hp.hocKy !== hocKy))) {
+                    alert("Học phần này đã tồn tại trong học kỳ này.");
+                    return;
+                }
+
+                const phanCongList = JSON.parse(localStorage.getItem('phanCongList')) || [];
+                const conflictGiangVien = phanCongList.some(pc =>
+                    pc.giangVien === newGiangVien &&
+                    pc.hocKy === newHocKy &&
+                    pc.thu === newThu &&
+                    (pc.maHP !== maHP || pc.hocKy !== hocKy) &&
+                    (parseInt(pc.tietBatDau) <= parseInt(newTietKetThuc) && parseInt(pc.tietKetThuc) >= parseInt(newTietBatDau))
+                );
+                if (conflictGiangVien) {
+                    alert("Giảng viên này đã có lịch dạy trùng trong khoảng thời gian này.");
+                    return;
+                }
+
+                const dangKyHocPhanList = JSON.parse(localStorage.getItem('dangKyHocPhanList')) || [];
+                const conflictPhong = dangKyHocPhanList.some(dk =>
+                    dk.toaNha === newToaNha &&
+                    dk.maPhong === newMaPhong &&
+                    dk.hocKy === newHocKy &&
+                    dk.thu === newThu &&
+                    (dk.maHP !== maHP || dk.hocKy !== hocKy) &&
+                    (parseInt(dk.tietBatDau) <= parseInt(newTietKetThuc) && parseInt(dk.tietKetThuc) >= parseInt(newTietBatDau))
+                );
+                if (conflictPhong) {
+                    alert("Phòng học đã được sử dụng trong khoảng thời gian này.");
+                    return;
+                }
+
+                const index = hocPhanList.findIndex(h => h.ma === maHP && h.hocKy === hocKy);
+                if (index !== -1) {
+                    hocPhanList[index] = {
+                        ma: newMaHP,
+                        ten: newTenHP,
+                        soTinChi: parseInt(newSoTinChi),
+                        siSoToiDa: parseInt(newSiSoToiDa),
+                        dieuKienTienQuyet: newDieuKien || null,
+                        khoa: newKhoa,
+                        nganh: newNganh,
+                        hocKy: newHocKy,
+                        giangVien: newGiangVien,
+                        toaNha: newToaNha,
+                        maPhong: newMaPhong,
+                        thu: newThu,
+                        tietBatDau: newTietBatDau,
+                        tietKetThuc: newTietKetThuc,
+                        trangThai: hocPhanList[index].trangThai
+                    };
+                    localStorage.setItem('hocPhanList', JSON.stringify(hocPhanList));
+                }
+
+                const dangKyIndex = dangKyHocPhanList.findIndex(dk => dk.maHP === maHP && dk.hocKy === hocKy);
+                if (dangKyIndex !== -1) {
+                    dangKyHocPhanList[dangKyIndex] = {
+                        maHP: newMaHP,
+                        khoa: newKhoa,
+                        nganh: newNganh,
+                        toaNha: newToaNha,
+                        maPhong: newMaPhong,
+                        hocKy: newHocKy,
+                        thu: newThu,
+                        tietBatDau: newTietBatDau,
+                        tietKetThuc: newTietKetThuc,
+                        siSo: parseInt(newSiSoToiDa)
+                    };
+                    localStorage.setItem('dangKyHocPhanList', JSON.stringify(dangKyHocPhanList));
+                }
+
+                const phanCongIndex = phanCongList.findIndex(pc => pc.maHP === maHP && pc.hocKy === hocKy);
+                if (phanCongIndex !== -1) {
+                    phanCongList[phanCongIndex] = {
+                        maHP: newMaHP,
+                        hocKy: newHocKy,
+                        giangVien: newGiangVien,
+                        thu: newThu,
+                        tietBatDau: newTietBatDau,
+                        tietKetThuc: newTietKetThuc
+                    };
+                    localStorage.setItem('phanCongList', JSON.stringify(phanCongList));
+                }
+
+                loadHocPhan();
+                loadDieuKienTienQuyet();
+            };
+        }
+
+        function xoaHocPhan(maHP, hocKy) {
+            const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
+            const sinhVienDangKyList = JSON.parse(localStorage.getItem('sinhVienDangKyList')) || [];
+            const lopHocPhanList = JSON.parse(localStorage.getItem('lopHocPhanList')) || [];
+
+            if (sinhVienDangKyList.some(sv => sv.maHP === maHP && sv.hocKy === hocKy)) {
+                alert("Không thể xóa học phần vì đã có sinh viên đăng ký.");
+                return;
+            }
+
+            if (lopHocPhanList.some(lhp => lhp.maHP === maHP && lhp.hocKy === hocKy)) {
+                alert("Không thể xóa học phần vì đã có lớp học phần liên quan.");
+                return;
+            }
+
+            if (hocPhanList.some(hp => hp.dieuKienTienQuyet === maHP)) {
+                alert("Không thể xóa học phần vì nó là điều kiện tiên quyết của học phần khác.");
+                return;
+            }
+
+            const newHocPhanList = hocPhanList.filter(hp => !(hp.ma === maHP && hp.hocKy === hocKy));
+            localStorage.setItem('hocPhanList', JSON.stringify(newHocPhanList));
+
+            const dangKyHocPhanList = JSON.parse(localStorage.getItem('dangKyHocPhanList')) || [];
+            const newDangKyHocPhanList = dangKyHocPhanList.filter(dk => !(dk.maHP === maHP && dk.hocKy === hocKy));
+            localStorage.setItem('dangKyHocPhanList', JSON.stringify(newDangKyHocPhanList));
+
+            const phanCongList = JSON.parse(localStorage.getItem('phanCongList')) || [];
+            const newPhanCongList = phanCongList.filter(pc => !(pc.maHP === maHP && pc.hocKy === hocKy));
+            localStorage.setItem('phanCongList', JSON.stringify(newPhanCongList));
+
+            loadHocPhan();
+            loadDieuKienTienQuyet();
+        }
+
+        function congBoHocPhan(maHP, hocKy) {
+            const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
+            const index = hocPhanList.findIndex(hp => hp.ma === maHP && hp.hocKy === hocKy);
+            if (index !== -1) {
+                hocPhanList[index].trangThai = 'Đã công bố';
+                localStorage.setItem('hocPhanList', JSON.stringify(hocPhanList));
+                loadHocPhan();
+            }
+        }
+
+        function dangXuat() {
+            window.location.href = 'Dang_Nhap.html';
+        }
+    </script>
 </body>
 </html>

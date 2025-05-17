@@ -122,7 +122,7 @@
             background-color: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        table td input, table td select {
+        table td select, table td input {
             width: 100%;
             padding: 0;
             border: none;
@@ -130,7 +130,7 @@
             font-size: 1rem;
             font-family: inherit;
         }
-        table td input:focus, table td select:focus {
+        table td select:focus, table td input:focus {
             outline: none;
             border-bottom: 1px solid #245139;
         }
@@ -192,8 +192,6 @@
         .add-form button:hover {
             background-color: #1e4030;
         }
-
-        /* Responsive Adjustments */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -255,7 +253,6 @@
                 font-size: 0.85rem;
             }
         }
-
         @media (max-width: 480px) {
             .sidebar {
                 padding: 5px;
@@ -298,12 +295,11 @@
         </div>
         <ul>
             <li><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.html">Quản lý học phần</a></li>
-            <li class="active"><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_giang_vien.html">Phân công giảng viên</a></li>
+            <li class="active"><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.html">Phân công giảng viên</a></li>
             <li><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.html">Quản lý phòng học</a></li>
-            <li><i class="fas fa-clipboard-list"></i><a href="#">Đăng ký học phần</a></li>
+            <li><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.html">Đăng ký học phần</a></li>
             <li><i class="fas fa-calendar-alt"></i><a href="#">Tra cứu lịch học</a></li>
             <li><i class="fas fa-calendar-check"></i><a href="#">Xem thời khóa biểu</a></li>
-            <li><i class="fas fa-users-cog"></i><a href="#">Quản lý lớp học phần</a></li>
             <li><i class="fas fa-sign-out-alt"></i><a href="#" onclick="dangXuat()">Đăng xuất</a></li>
         </ul>
     </div>
@@ -318,33 +314,81 @@
         <div class="container">
             <div class="add-form">
                 <h3>Phân công giảng viên</h3>
+                <select id="khoa">
+                    <option value="" disabled selected>Chọn khoa</option>
+                </select>
+                <select id="nganh">
+                    <option value="" disabled selected>Chọn ngành</option>
+                </select>
                 <select id="maHP">
-                    <option value="" disabled selected>Chọn mã học phần</option>
-                    <option value="IT101">IT101 - Nhập môn lập trình</option>
-                    <option value="IT102">IT102 - Cấu trúc dữ liệu</option>
+                    <option value="" disabled selected>Chọn học phần</option>
                 </select>
                 <select id="maGV">
                     <option value="" disabled selected>Chọn giảng viên</option>
-                    <option value="GV001">GV001 - Nguyễn Văn A</option>
-                    <option value="GV002">GV002 - Trần Thị B</option>
                 </select>
                 <input type="text" id="hocKy" placeholder="Học kỳ (VD: 2024-1)">
+                <select id="thu">
+                    <option value="" disabled selected>Chọn thứ</option>
+                    <option value="2">Thứ 2</option>
+                    <option value="3">Thứ 3</option>
+                    <option value="4">Thứ 4</option>
+                    <option value="5">Thứ 5</option>
+                    <option value="6">Thứ 6</option>
+                    <option value="7">Thứ 7</option>
+                    <option value="8">Chủ nhật</option>
+                </select>
+                <select id="tietBatDau">
+                    <option value="" disabled selected>Chọn tiết bắt đầu</option>
+                    <option value="1">Tiết 1 (6:30 - 7:20)</option>
+                    <option value="2">Tiết 2 (7:20 - 8:10)</option>
+                    <option value="3">Tiết 3 (8:10 - 9:00)</option>
+                    <option value="4">Tiết 4 (9:00 - 9:50)</option>
+                    <option value="5">Tiết 5 (9:50 - 10:40)</option>
+                    <option value="6">Tiết 6 (10:40 - 11:30)</option>
+                    <option value="7">Tiết 7 (12:00 - 12:50)</option>
+                    <option value="8">Tiết 8 (12:50 - 13:40)</option>
+                    <option value="9">Tiết 9 (13:40 - 14:30)</option>
+                    <option value="10">Tiết 10 (14:30 - 15:20)</option>
+                    <option value="11">Tiết 11 (15:20 - 16:10)</option>
+                    <option value="12">Tiết 12 (16:10 - 17:00)</option>
+                </select>
+                <select id="tietKetThuc">
+                    <option value="" disabled selected>Chọn tiết kết thúc</option>
+                    <option value="1">Tiết 1 (6:30 - 7:20)</option>
+                    <option value="2">Tiết 2 (7:20 - 8:10)</option>
+                    <option value="3">Tiết 3 (8:10 - 9:00)</option>
+                    <option value="4">Tiết 4 (9:00 - 9:50)</option>
+                    <option value="5">Tiết 5 (9:50 - 10:40)</option>
+                    <option value="6">Tiết 6 (10:40 - 11:30)</option>
+                    <option value="7">Tiết 7 (12:00 - 12:50)</option>
+                    <option value="8">Tiết 8 (12:50 - 13:40)</option>
+                    <option value="9">Tiết 9 (13:40 - 14:30)</option>
+                    <option value="10">Tiết 10 (14:30 - 15:20)</option>
+                    <option value="11">Tiết 11 (15:20 - 16:10)</option>
+                    <option value="12">Tiết 12 (16:10 - 17:00)</option>
+                </select>
                 <button onclick="phanCongGiangVien()">Phân công</button>
             </div>
             <table id="bangPhanCong">
                 <thead>
                     <tr>
-                        <th>Mã học phần</th>
+                        <th>Khoa</th>
+                        <th>Ngành</th>
+                        <th>Học phần</th>
                         <th>Giảng viên</th>
                         <th>Học kỳ</th>
+                        <th>Thời gian</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>IT101</td>
+                        <td>Công nghệ thông tin</td>
+                        <td>Kỹ thuật phần mềm</td>
+                        <td>IT101 - Nhập môn lập trình</td>
                         <td>Nguyễn Văn A</td>
                         <td>2024-1</td>
+                        <td>Thứ 2, Tiết 2 - 5 (7:20 - 10:40)</td>
                         <td class="actions">
                             <button class="edit-btn" onclick="chinhSuaDong(this)">Chỉnh sửa</button>
                             <button class="delete-btn" onclick="xoaDong(this)">Xóa</button>
@@ -355,47 +399,175 @@
         </div>
     </div>
     <script>
-        // Lấy dữ liệu từ localStorage khi tải trang
         document.addEventListener('DOMContentLoaded', function () {
+            loadKhoa();
+            loadNganh();
+            loadHocPhan();
+            loadGiangVien();
             const data = JSON.parse(localStorage.getItem('phanCongList')) || [];
-            data.forEach(pc => themDongVaoBang(pc.maHP, pc.giangVien, pc.hocKy));
+            data.forEach(pc => themDongVaoBang(pc.khoa, pc.nganh, pc.maHP, pc.maGV, pc.hocKy, pc.thu, pc.tietBatDau, pc.tietKetThuc));
         });
+
+        function loadKhoa() {
+            const khoaList = JSON.parse(localStorage.getItem('khoaList')) || [];
+            const selectKhoa = document.getElementById('khoa');
+            khoaList.forEach(khoa => {
+                const option = document.createElement('option');
+                option.value = khoa.maKhoa;
+                option.text = khoa.tenKhoa;
+                selectKhoa.appendChild(option);
+            });
+        }
+
+        function loadNganh() {
+            const nganhList = JSON.parse(localStorage.getItem('nganhList')) || [];
+            const selectNganh = document.getElementById('nganh');
+            selectNganh.innerHTML = '<option value="" disabled selected>Chọn ngành</option>';
+            const selectedKhoa = document.getElementById('khoa').value;
+            nganhList.filter(nganh => !selectedKhoa || nganh.maKhoa === selectedKhoa).forEach(nganh => {
+                const option = document.createElement('option');
+                option.value = nganh.maNganh;
+                option.text = nganh.tenNganh;
+                selectNganh.appendChild(option);
+            });
+        }
+
+        function loadHocPhan() {
+            const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
+            const selectHocPhan = document.getElementById('maHP');
+            selectHocPhan.innerHTML = '<option value="" disabled selected>Chọn học phần</option>';
+            const selectedKhoa = document.getElementById('khoa').value;
+            const selectedNganh = document.getElementById('nganh').value;
+            hocPhanList.filter(hp => (!selectedKhoa || hp.khoa === selectedKhoa) && (!selectedNganh || hp.nganh === selectedNganh)).forEach(hp => {
+                const option = document.createElement('option');
+                option.value = hp.ma;
+                option.text = `${hp.ma} - ${hp.ten}`;
+                selectHocPhan.appendChild(option);
+            });
+        }
+
+        function loadGiangVien() {
+            const giangVienList = JSON.parse(localStorage.getItem('giangVienList')) || [
+                { maGV: 'GV001', tenGV: 'Nguyễn Văn A' },
+                { maGV: 'GV002', tenGV: 'Trần Thị B' }
+            ];
+            localStorage.setItem('giangVienList', JSON.stringify(giangVienList));
+            const selectGiangVien = document.getElementById('maGV');
+            giangVienList.forEach(gv => {
+                const option = document.createElement('option');
+                option.value = gv.maGV;
+                option.text = `${gv.maGV} - ${gv.tenGV}`;
+                selectGiangVien.appendChild(option);
+            });
+        }
+
+        document.getElementById('khoa').addEventListener('change', () => {
+            loadNganh();
+            loadHocPhan();
+        });
+        document.getElementById('nganh').addEventListener('change', loadHocPhan);
 
         function dangXuat() {
             window.location.href = 'Dang_Nhap.html';
         }
 
         function phanCongGiangVien() {
+            const khoa = document.getElementById('khoa').value;
+            const nganh = document.getElementById('nganh').value;
             const maHP = document.getElementById('maHP').value;
             const maGV = document.getElementById('maGV').value;
             const hocKy = document.getElementById('hocKy').value.trim();
+            const thu = document.getElementById('thu').value;
+            const tietBatDau = document.getElementById('tietBatDau').value;
+            const tietKetThuc = document.getElementById('tietKetThuc').value;
 
-            if (!maHP || !maGV || !hocKy) {
+            if (!khoa || !nganh || !maHP || !maGV || !hocKy || !thu || !tietBatDau || !tietKetThuc) {
                 alert("Vui lòng nhập đầy đủ thông tin.");
                 return;
             }
 
-            const giangVien = document.getElementById('maGV').options[document.getElementById('maGV').selectedIndex].text.split(' - ')[1];
+            if (parseInt(tietKetThuc) < parseInt(tietBatDau)) {
+                alert("Tiết kết thúc phải lớn hơn hoặc bằng tiết bắt đầu.");
+                return;
+            }
 
-            // Lưu vào localStorage
             const phanCongList = JSON.parse(localStorage.getItem('phanCongList')) || [];
-            phanCongList.push({ maHP, giangVien, hocKy });
+            const conflict = phanCongList.some(item => 
+                item.maGV === maGV && 
+                item.thu === thu && 
+                item.hocKy === hocKy &&
+                (parseInt(item.tietBatDau) <= parseInt(tietKetThuc) && parseInt(item.tietKetThuc) >= parseInt(tietBatDau))
+            );
+            if (conflict) {
+                alert("Giảng viên đã được phân công trong khoảng thời gian này.");
+                return;
+            }
+
+            phanCongList.push({ khoa, nganh, maHP, maGV, hocKy, thu, tietBatDau, tietKetThuc });
             localStorage.setItem('phanCongList', JSON.stringify(phanCongList));
 
-            themDongVaoBang(maHP, giangVien, hocKy);
+            themDongVaoBang(khoa, nganh, maHP, maGV, hocKy, thu, tietBatDau, tietKetThuc);
 
+            document.getElementById('khoa').value = '';
+            document.getElementById('nganh').value = '';
             document.getElementById('maHP').value = '';
             document.getElementById('maGV').value = '';
             document.getElementById('hocKy').value = '';
+            document.getElementById('thu').value = '';
+            document.getElementById('tietBatDau').value = '';
+            document.getElementById('tietKetThuc').value = '';
+            loadNganh();
+            loadHocPhan();
         }
 
-        function themDongVaoBang(maHP, giangVien, hocKy) {
+        function themDongVaoBang(khoa, nganh, maHP, maGV, hocKy, thu, tietBatDau, tietKetThuc) {
+            const khoaList = JSON.parse(localStorage.getItem('khoaList')) || [];
+            const nganhList = JSON.parse(localStorage.getItem('nganhList')) || [];
+            const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
+            const giangVienList = JSON.parse(localStorage.getItem('giangVienList')) || [];
+            const tenKhoa = khoaList.find(k => k.maKhoa === khoa)?.tenKhoa || khoa;
+            const tenNganh = nganhList.find(n => n.maNganh === nganh)?.tenNganh || nganh;
+            const hp = hocPhanList.find(item => item.ma === maHP);
+            const gv = giangVienList.find(item => item.maGV === maGV);
+            const tenHP = hp ? `${maHP} - ${hp.ten}` : maHP;
+            const tenGV = gv ? `${gv.tenGV}` : maGV;
+
+            const thuText = {
+                '2': 'Thứ 2',
+                '3': 'Thứ 3',
+                '4': 'Thứ 4',
+                '5': 'Thứ 5',
+                '6': 'Thứ 6',
+                '7': 'Thứ 7',
+                '8': 'Chủ nhật'
+            }[thu];
+
+            const tietTime = {
+                '1': '6:30 - 7:20',
+                '2': '7:20 - 8:10',
+                '3': '8:10 - 9:00',
+                '4': '9:00 - 9:50',
+                '5': '9:50 - 10:40',
+                '6': '10:40 - 11:30',
+                '7': '12:00 - 12:50',
+                '8': '12:50 - 13:40',
+                '9': '13:40 - 14:30',
+                '10': '14:30 - 15:20',
+                '11': '15:20 - 16:10',
+                '12': '16:10 - 17:00'
+            };
+
+            const thoiGian = `${thuText}, Tiết ${tietBatDau} - ${tietKetThuc} (${tietTime[tietBatDau].split(' - ')[0]} - ${tietTime[tietKetThuc].split(' - ')[1]})`;
+
             const tbody = document.getElementById('bangPhanCong').querySelector('tbody');
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
-                <td>${maHP}</td>
-                <td>${giangVien}</td>
+                <td>${tenKhoa}</td>
+                <td>${tenNganh}</td>
+                <td>${tenHP}</td>
+                <td>${tenGV}</td>
                 <td>${hocKy}</td>
+                <td>${thoiGian}</td>
                 <td class="actions">
                     <button class="edit-btn" onclick="chinhSuaDong(this)">Chỉnh sửa</button>
                     <button class="delete-btn" onclick="xoaDong(this)">Xóa</button>
@@ -408,41 +580,194 @@
             const row = button.parentElement.parentElement;
             const cells = row.querySelectorAll('td');
 
-            const maHP = cells[0].innerText;
-            const giangVien = cells[1].innerText;
-            const hocKy = cells[2].innerText;
+            const tenKhoa = cells[0].innerText;
+            const tenNganh = cells[1].innerText;
+            const maHPText = cells[2].innerText.split(' - ')[0];
+            const maGVText = cells[3].innerText;
+            const hocKy = cells[4].innerText;
+            const thoiGian = cells[5].innerText;
+            const thuText = thoiGian.split(', ')[0];
+            const tietText = thoiGian.split(', ')[1].split(' (')[0].split(' - ');
+            const tietBatDau = tietText[0].split(' ')[1];
+            const tietKetThuc = tietText[1];
 
-            cells[0].innerHTML = `
-                <select>
-                    <option value="${maHP}" selected>${maHP}</option>
-                    <option value="IT101">IT101 - Nhập môn lập trình</option>
-                    <option value="IT102">IT102 - Cấu trúc dữ liệu</option>
-                </select>`;
-            cells[1].innerHTML = `
-                <select>
-                    <option value="${giangVien}" selected>${giangVien}</option>
-                    <option value="Nguyễn Văn A">Nguyễn Văn A</option>
-                    <option value="Trần Thị B">Trần Thị B</option>
-                </select>`;
-            cells[2].innerHTML = `<input type="text" value="${hocKy}" style="width: 100%;">`;
+            const khoaList = JSON.parse(localStorage.getItem('khoaList')) || [];
+            const nganhList = JSON.parse(localStorage.getItem('nganhList')) || [];
+            const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
+            const giangVienList = JSON.parse(localStorage.getItem('giangVienList')) || [];
+            const maKhoa = khoaList.find(k => k.tenKhoa === tenKhoa)?.maKhoa || '';
+            const maNganh = nganhList.find(n => n.tenNganh === tenNganh)?.maNganh || '';
+
+            const thuValue = {
+                'Thứ 2': '2',
+                'Thứ 3': '3',
+                'Thứ 4': '4',
+                'Thứ 5': '5',
+                'Thứ 6': '6',
+                'Thứ 7': '7',
+                'Chủ nhật': '8'
+            }[thuText];
+
+            let khoaOptions = '<option value="" disabled>Chọn khoa</option>';
+            khoaList.forEach(khoa => {
+                const selected = khoa.maKhoa === maKhoa ? 'selected' : '';
+                khoaOptions += `<option value="${khoa.maKhoa}" ${selected}>${khoa.tenKhoa}</option>`;
+            });
+
+            let nganhOptions = '<option value="" disabled>Chọn ngành</option>';
+            nganhList.filter(nganh => !maKhoa || nganh.maKhoa === maKhoa).forEach(nganh => {
+                const selected = nganh.maNganh === maNganh ? 'selected' : '';
+                nganhOptions += `<option value="${nganh.maNganh}" ${selected}>${nganh.tenNganh}</option>`;
+            });
+
+            let hpOptions = '<option value="" disabled>Chọn học phần</option>';
+            hocPhanList.filter(hp => (!maKhoa || hp.khoa === maKhoa) && (!maNganh || hp.nganh === maNganh)).forEach(hp => {
+                const selected = hp.ma === maHPText ? 'selected' : '';
+                hpOptions += `<option value="${hp.ma}" ${selected}>${hp.ma} - ${hp.ten}</option>`;
+            });
+
+            let gvOptions = '<option value="" disabled>Chọn giảng viên</option>';
+            giangVienList.forEach(gv => {
+                const selected = gv.tenGV === maGVText ? 'selected' : '';
+                gvOptions += `<option value="${gv.maGV}" ${selected}>${gv.maGV} - ${gv.tenGV}</option>`;
+            });
+
+            let thuOptions = '<option value="" disabled>Chọn thứ</option>';
+            const thuList = [
+                { value: '2', text: 'Thứ 2' },
+                { value: '3', text: 'Thứ 3' },
+                { value: '4', text: 'Thứ 4' },
+                { value: '5', text: 'Thứ 5' },
+                { value: '6', text: 'Thứ 6' },
+                { value: '7', text: 'Thứ 7' },
+                { value: '8', text: 'Chủ nhật' }
+            ];
+            thuList.forEach(thu => {
+                const selected = thu.value === thuValue ? 'selected' : '';
+                thuOptions += `<option value="${thu.value}" ${selected}>${thu.text}</option>`;
+            });
+
+            let tietOptions = '';
+            const tietList = [
+                { value: '1', text: 'Tiết 1 (6:30 - 7:20)' },
+                { value: '2', text: 'Tiết 2 (7:20 - 8:10)' },
+                { value: '3', text: 'Tiết 3 (8:10 - 9:00)' },
+                { value: '4', text: 'Tiết 4 (9:00 - 9:50)' },
+                { value: '5', text: 'Tiết 5 (9:50 - 10:40)' },
+                { value: '6', text: 'Tiết 6 (10:40 - 11:30)' },
+                { value: '7', text: 'Tiết 7 (12:00 - 12:50)' },
+                { value: '8', text: 'Tiết 8 (12:50 - 13:40)' },
+                { value: '9', text: 'Tiết 9 (13:40 - 14:30)' },
+                { value: '10', text: 'Tiết 10 (14:30 - 15:20)' },
+                { value: '11', text: 'Tiết 11 (15:20 - 16:10)' },
+                { value: '12', text: 'Tiết 12 (16:10 - 17:00)' }
+            ];
+            let tietBatDauOptions = '<option value="" disabled>Chọn tiết bắt đầu</option>';
+            let tietKetThucOptions = '<option value="" disabled>Chọn tiết kết thúc</option>';
+            tietList.forEach(tiet => {
+                const selectedBatDau = tiet.value === tietBatDau ? 'selected' : '';
+                const selectedKetThuc = tiet.value === tietKetThuc ? 'selected' : '';
+                tietBatDauOptions += `<option value="${tiet.value}" ${selectedBatDau}>${tiet.text}</option>`;
+                tietKetThucOptions += `<option value="${tiet.value}" ${selectedKetThuc}>${tiet.text}</option>`;
+            });
+
+            cells[0].innerHTML = `<select id="editKhoa">${khoaOptions}</select>`;
+            cells[1].innerHTML = `<select id="editNganh">${nganhOptions}</select>`;
+            cells[2].innerHTML = `<select id="editMaHP">${hpOptions}</select>`;
+            cells[3].innerHTML = `<select id="editMaGV">${gvOptions}</select>`;
+            cells[4].innerHTML = `<input type="text" value="${hocKy}" style="width: 100%;">`;
+            cells[5].innerHTML = `
+                <select id="editThu">${thuOptions}</select>
+                <select id="editTietBatDau">${tietBatDauOptions}</select>
+                <select id="editTietKetThuc">${tietKetThucOptions}</select>
+            `;
+
+            const updateNganh = () => {
+                const selectedKhoa = document.getElementById('editKhoa').value;
+                const editNganh = document.getElementById('editNganh');
+                editNganh.innerHTML = '<option value="" disabled selected>Chọn ngành</option>';
+                nganhList.filter(nganh => !selectedKhoa || nganh.maKhoa === selectedKhoa).forEach(nganh => {
+                    const option = document.createElement('option');
+                    option.value = nganh.maNganh;
+                    option.text = nganh.tenNganh;
+                    editNganh.appendChild(option);
+                });
+                updateHocPhan();
+            };
+
+            const updateHocPhan = () => {
+                const selectedKhoa = document.getElementById('editKhoa').value;
+                const selectedNganh = document.getElementById('editNganh').value;
+                const editMaHP = document.getElementById('editMaHP');
+                editMaHP.innerHTML = '<option value="" disabled selected>Chọn học phần</option>';
+                hocPhanList.filter(hp => (!selectedKhoa || hp.khoa === selectedKhoa) && (!selectedNganh || hp.nganh === selectedNganh)).forEach(hp => {
+                    const option = document.createElement('option');
+                    option.value = hp.ma;
+                    option.text = `${hp.ma} - ${hp.ten}`;
+                    editMaHP.appendChild(option);
+                });
+            };
+
+            document.getElementById('editKhoa').addEventListener('change', updateNganh);
+            document.getElementById('editNganh').addEventListener('change', updateHocPhan);
 
             button.textContent = 'Lưu';
             button.onclick = function () {
                 const selects = row.querySelectorAll('select');
                 const input = row.querySelector('input');
-                const newMaHP = selects[0].value;
-                const newGiangVien = selects[1].value;
+                const newKhoa = selects[0].value;
+                const newNganh = selects[1].value;
+                const newMaHP = selects[2].value;
+                const newMaGV = selects[3].value;
                 const newHocKy = input.value.trim();
+                const newThu = selects[4].value;
+                const newTietBatDau = selects[5].value;
+                const newTietKetThuc = selects[6].value;
 
-                cells[0].innerText = newMaHP;
-                cells[1].innerText = newGiangVien;
-                cells[2].innerText = newHocKy;
+                if (!newKhoa || !newNganh || !newMaHP || !newMaGV || !newHocKy || !newThu || !newTietBatDau || !newTietKetThuc) {
+                    alert("Vui lòng nhập đầy đủ thông tin.");
+                    return;
+                }
 
-                // Cập nhật localStorage
+                if (parseInt(newTietKetThuc) < parseInt(newTietBatDau)) {
+                    alert("Tiết kết thúc phải lớn hơn hoặc bằng tiết bắt đầu.");
+                    return;
+                }
+
                 const phanCongList = JSON.parse(localStorage.getItem('phanCongList')) || [];
-                const index = phanCongList.findIndex(item => item.maHP === maHP && item.giangVien === giangVien && item.hocKy === hocKy);
+                const conflict = phanCongList.some(item => 
+                    (item.maHP !== maHPText || item.maGV !== newMaGV || item.hocKy !== hocKy) &&
+                    item.maGV === newMaGV && 
+                    item.thu === newThu && 
+                    item.hocKy === newHocKy &&
+                    (parseInt(item.tietBatDau) <= parseInt(newTietKetThuc) && parseInt(item.tietKetThuc) >= parseInt(newTietBatDau))
+                );
+                if (conflict) {
+                    alert("Giảng viên đã được phân công trong khoảng thời gian này.");
+                    return;
+                }
+
+                const newHP = hocPhanList.find(item => item.ma === newMaHP);
+                const newGV = giangVienList.find(item => item.maGV === newMaGV);
+                const newTenKhoa = khoaList.find(k => k.maKhoa === newKhoa)?.tenKhoa || newKhoa;
+                const newTenNganh = nganhList.find(n => n.maNganh === newNganh)?.tenNganh || newNganh;
+                const thuText = thuList.find(item => item.value === newThu).text;
+                const tietTime = tietList.reduce((acc, tiet) => ({
+                    ...acc,
+                    [tiet.value]: tiet.text.split(' (')[1].slice(0, -1)
+                }), {});
+                const thoiGian = `${thuText}, Tiết ${newTietBatDau} - ${newTietKetThuc} (${tietTime[newTietBatDau].split(' - ')[0]} - ${tietTime[newTietKetThuc].split(' - ')[1]})`;
+
+                cells[0].innerText = newTenKhoa;
+                cells[1].innerText = newTenNganh;
+                cells[2].innerText = newHP ? `${newMaHP} - ${newHP.ten}` : newMaHP;
+                cells[3].innerText = newGV ? `${newGV.tenGV}` : newMaGV;
+                cells[4].innerText = newHocKy;
+                cells[5].innerText = thoiGian;
+
+                const index = phanCongList.findIndex(item => item.maHP === maHPText && item.maGV === newMaGV && item.hocKy === hocKy);
                 if (index !== -1) {
-                    phanCongList[index] = { maHP: newMaHP, giangVien: newGiangVien, hocKy: newHocKy };
+                    phanCongList[index] = { khoa: newKhoa, nganh: newNganh, maHP: newMaHP, maGV: newMaGV, hocKy: newHocKy, thu: newThu, tietBatDau: newTietBatDau, tietKetThuc: newTietKetThuc };
                     localStorage.setItem('phanCongList', JSON.stringify(phanCongList));
                 }
 
@@ -454,13 +779,18 @@
         function xoaDong(button) {
             const row = button.parentElement.parentElement;
             const cells = row.querySelectorAll('td');
-            const maHP = cells[0].innerText;
-            const giangVien = cells[1].innerText;
-            const hocKy = cells[2].innerText;
+            const maHP = cells[2].innerText.split(' - ')[0];
+            const maGV = cells[3].innerText;
+            const hocKy = cells[4].innerText;
 
-            // Xóa khỏi localStorage
+            const dangKyHocPhanList = JSON.parse(localStorage.getItem('dangKyHocPhanList')) || [];
+            if (dangKyHocPhanList.some(dk => dk.maHP === maHP && dk.hocKy === hocKy)) {
+                alert("Không thể xóa phân công vì học phần này đang được sử dụng trong đăng ký học phần.");
+                return;
+            }
+
             let phanCongList = JSON.parse(localStorage.getItem('phanCongList')) || [];
-            phanCongList = phanCongList.filter(item => !(item.maHP === maHP && item.giangVien === giangVien && item.hocKy === hocKy));
+            phanCongList = phanCongList.filter(item => !(item.maHP === maHP && item.maGV === maGV && item.hocKy === hocKy));
             localStorage.setItem('phanCongList', JSON.stringify(phanCongList));
 
             row.remove();

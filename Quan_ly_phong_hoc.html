@@ -122,7 +122,7 @@
             background-color: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        table td input {
+        table td input, table td select {
             width: 100%;
             padding: 0;
             border: none;
@@ -130,7 +130,7 @@
             font-size: 1rem;
             font-family: inherit;
         }
-        table td input:focus {
+        table td input:focus, table td select:focus {
             outline: none;
             border-bottom: 1px solid #245139;
         }
@@ -174,7 +174,7 @@
             border-radius: 6px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .add-form input {
+        .add-form input, .add-form select {
             margin: 0.5rem 1rem 0.5rem 0;
             padding: 8px;
             border: 1px solid #ccc;
@@ -192,8 +192,6 @@
         .add-form button:hover {
             background-color: #1e4030;
         }
-
-        /* Responsive Adjustments */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -234,7 +232,7 @@
             .add-form {
                 padding: 0.5rem;
             }
-            .add-form input {
+            .add-form input, .add-form select {
                 width: 100%;
                 margin: 0.25rem 0;
             }
@@ -255,7 +253,6 @@
                 font-size: 0.85rem;
             }
         }
-
         @media (max-width: 480px) {
             .sidebar {
                 padding: 5px;
@@ -300,10 +297,9 @@
             <li><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.html">Quản lý học phần</a></li>
             <li><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.html">Phân công giảng viên</a></li>
             <li class="active"><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.html">Quản lý phòng học</a></li>
-            <li><i class="fas fa-clipboard-list"></i><a href="#">Đăng ký học phần</a></li>
+            <li><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.html">Đăng ký học phần</a></li>
             <li><i class="fas fa-calendar-alt"></i><a href="#">Tra cứu lịch học</a></li>
             <li><i class="fas fa-calendar-check"></i><a href="#">Xem thời khóa biểu</a></li>
-            <li><i class="fas fa-users-cog"></i><a href="#">Quản lý lớp học phần</a></li>
             <li><i class="fas fa-sign-out-alt"></i><a href="#" onclick="dangXuat()">Đăng xuất</a></li>
         </ul>
     </div>
@@ -318,14 +314,18 @@
         <div class="container">
             <div class="add-form">
                 <h3>Thêm phòng học mới</h3>
-                <input type="text" id="maPhong" placeholder="Mã phòng học">
-                <input type="text" id="tenPhong" placeholder="Tên phòng học">
-                <input type="text" id="sucChua" placeholder="Sức chứa">
+                <select id="toaNha">
+                    <option value="" disabled selected>Chọn tòa nhà</option>
+                </select>
+                <input type="text" id="maPhong" placeholder="Mã phòng học (VD: P101)">
+                <input type="text" id="tenPhong" placeholder="Tên phòng học (VD: Phòng học A1)">
+                <input type="number" id="sucChua" placeholder="Sức chứa (VD: 50)" min="1">
                 <button onclick="themPhongHoc()">Thêm</button>
             </div>
             <table id="bangPhongHoc">
                 <thead>
                     <tr>
+                        <th>Tòa nhà</th>
                         <th>Mã phòng học</th>
                         <th>Tên phòng học</th>
                         <th>Sức chứa</th>
@@ -334,6 +334,7 @@
                 </thead>
                 <tbody>
                     <tr>
+                        <td>Tòa A</td>
                         <td>P101</td>
                         <td>Phòng học A1</td>
                         <td>50</td>
@@ -347,22 +348,45 @@
         </div>
     </div>
     <script>
+        // Dữ liệu mẫu cho tòa nhà
+        const toaNhaList = [
+            { maToa: 'T01', tenToa: 'Tòa A' },
+            { maToa: 'T02', tenToa: 'Tòa B' },
+            { maToa: 'T03', tenToa: 'Tòa C' }
+        ];
+
         // Lấy dữ liệu từ localStorage khi tải trang
         document.addEventListener('DOMContentLoaded', function () {
+            if (!localStorage.getItem('toaNhaList')) {
+                localStorage.setItem('toaNhaList', JSON.stringify(toaNhaList));
+            }
+            loadToaNha();
             const data = JSON.parse(localStorage.getItem('phongHocList')) || [];
-            data.forEach(ph => themDongVaoBang(ph.maPhong, ph.tenPhong, ph.sucChua));
+            data.forEach(ph => themDongVaoBang(ph.toaNha, ph.maPhong, ph.tenPhong, ph.sucChua));
         });
+
+        function loadToaNha() {
+            const toaNhaList = JSON.parse(localStorage.getItem('toaNhaList')) || [];
+            const selectToaNha = document.getElementById('toaNha');
+            toaNhaList.forEach(toa => {
+                const option = document.createElement('option');
+                option.value = toa.maToa;
+                option.text = toa.tenToa;
+                selectToaNha.appendChild(option);
+            });
+        }
 
         function dangXuat() {
             window.location.href = 'Dang_Nhap.html';
         }
 
         function themPhongHoc() {
+            const toaNha = document.getElementById('toaNha').value;
             const maPhong = document.getElementById('maPhong').value.trim();
             const tenPhong = document.getElementById('tenPhong').value.trim();
             const sucChua = document.getElementById('sucChua').value.trim();
 
-            if (!maPhong || !tenPhong || !sucChua) {
+            if (!toaNha || !maPhong || !tenPhong || !sucChua) {
                 alert("Vui lòng nhập đầy đủ thông tin.");
                 return;
             }
@@ -372,22 +396,33 @@
                 return;
             }
 
-            // Lưu vào localStorage
+            // Kiểm tra mã phòng học trùng lặp trong cùng tòa nhà
             const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
-            phongHocList.push({ maPhong, tenPhong, sucChua });
+            if (phongHocList.some(ph => ph.toaNha === toaNha && ph.maPhong === maPhong)) {
+                alert("Mã phòng học đã tồn tại trong tòa nhà này.");
+                return;
+            }
+
+            // Lưu vào localStorage
+            phongHocList.push({ toaNha, maPhong, tenPhong, sucChua: parseInt(sucChua) });
             localStorage.setItem('phongHocList', JSON.stringify(phongHocList));
 
-            themDongVaoBang(maPhong, tenPhong, sucChua);
+            themDongVaoBang(toaNha, maPhong, tenPhong, sucChua);
 
+            document.getElementById('toaNha').value = '';
             document.getElementById('maPhong').value = '';
             document.getElementById('tenPhong').value = '';
             document.getElementById('sucChua').value = '';
         }
 
-        function themDongVaoBang(maPhong, tenPhong, sucChua) {
+        function themDongVaoBang(toaNha, maPhong, tenPhong, sucChua) {
+            const toaNhaList = JSON.parse(localStorage.getItem('toaNhaList')) || [];
+            const tenToa = toaNhaList.find(t => t.maToa === toaNha)?.tenToa || toaNha;
+
             const tbody = document.getElementById('bangPhongHoc').querySelector('tbody');
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
+                <td>${tenToa}</td>
                 <td>${maPhong}</td>
                 <td>${tenPhong}</td>
                 <td>${sucChua}</td>
@@ -403,22 +438,35 @@
             const row = button.parentElement.parentElement;
             const cells = row.querySelectorAll('td');
 
-            const maPhong = cells[0].innerText;
-            const tenPhong = cells[1].innerText;
-            const sucChua = cells[2].innerText;
+            const tenToa = cells[0].innerText;
+            const maPhong = cells[1].innerText;
+            const tenPhong = cells[2].innerText;
+            const sucChua = cells[3].innerText;
 
-            cells[0].innerHTML = `<input type="text" value="${maPhong}" style="width: 100%;">`;
-            cells[1].innerHTML = `<input type="text" value="${tenPhong}" style="width: 100%;">`;
-            cells[2].innerHTML = `<input type="text" value="${sucChua}" style="width: 100%;">`;
+            const toaNhaList = JSON.parse(localStorage.getItem('toaNhaList')) || [];
+            const maToa = toaNhaList.find(t => t.tenToa === tenToa)?.maToa || '';
+
+            let toaNhaOptions = '<option value="" disabled>Chọn tòa nhà</option>';
+            toaNhaList.forEach(toa => {
+                const selected = toa.maToa === maToa ? 'selected' : '';
+                toaNhaOptions += `<option value="${toa.maToa}" ${selected}>${toa.tenToa}</option>`;
+            });
+
+            cells[0].innerHTML = `<select id="editToaNha">${toaNhaOptions}</select>`;
+            cells[1].innerHTML = `<input type="text" value="${maPhong}" style="width: 100%;">`;
+            cells[2].innerHTML = `<input type="text" value="${tenPhong}" style="width: 100%;">`;
+            cells[3].innerHTML = `<input type="number" value="${sucChua}" min="1" style="width: 100%;">`;
 
             button.textContent = 'Lưu';
             button.onclick = function () {
+                const select = row.querySelector('select');
                 const inputs = row.querySelectorAll('input');
+                const newToaNha = select.value;
                 const newMaPhong = inputs[0].value.trim();
                 const newTenPhong = inputs[1].value.trim();
                 const newSucChua = inputs[2].value.trim();
 
-                if (!newMaPhong || !newTenPhong || !newSucChua) {
+                if (!newToaNha || !newMaPhong || !newTenPhong || !newSucChua) {
                     alert("Vui lòng nhập đầy đủ thông tin.");
                     return;
                 }
@@ -428,15 +476,24 @@
                     return;
                 }
 
-                cells[0].innerText = newMaPhong;
-                cells[1].innerText = newTenPhong;
-                cells[2].innerText = newSucChua;
+                // Kiểm tra mã phòng học trùng lặp, ngoại trừ dòng hiện tại
+                const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
+                if (phongHocList.some(ph => ph.toaNha === newToaNha && ph.maPhong === newMaPhong && (ph.toaNha !== maToa || ph.maPhong !== maPhong))) {
+                    alert("Mã phòng học đã tồn tại trong tòa nhà này.");
+                    return;
+                }
+
+                const newTenToa = toaNhaList.find(t => t.maToa === newToaNha)?.tenToa || newToaNha;
+
+                cells[0].innerText = newTenToa;
+                cells[1].innerText = newMaPhong;
+                cells[2].innerText = newTenPhong;
+                cells[3].innerText = newSucChua;
 
                 // Cập nhật localStorage
-                const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
-                const index = phongHocList.findIndex(item => item.maPhong === maPhong && item.tenPhong === tenPhong && item.sucChua === sucChua);
+                const index = phongHocList.findIndex(item => item.toaNha === maToa && item.maPhong === maPhong);
                 if (index !== -1) {
-                    phongHocList[index] = { maPhong: newMaPhong, tenPhong: newTenPhong, sucChua: newSucChua };
+                    phongHocList[index] = { toaNha: newToaNha, maPhong: newMaPhong, tenPhong: newTenPhong, sucChua: parseInt(newSucChua) };
                     localStorage.setItem('phongHocList', JSON.stringify(phongHocList));
                 }
 
@@ -448,13 +505,18 @@
         function xoaDong(button) {
             const row = button.parentElement.parentElement;
             const cells = row.querySelectorAll('td');
-            const maPhong = cells[0].innerText;
-            const tenPhong = cells[1].innerText;
-            const sucChua = cells[2].innerText;
+            const maPhong = cells[1].innerText;
+
+            // Kiểm tra phòng học có đang được sử dụng
+            const dangKyHocPhanList = JSON.parse(localStorage.getItem('dangKyHocPhanList')) || [];
+            if (dangKyHocPhanList.some(dk => dk.maPhong === maPhong)) {
+                alert("Không thể xóa phòng học vì đang được sử dụng trong đăng ký học phần.");
+                return;
+            }
 
             // Xóa khỏi localStorage
             let phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
-            phongHocList = phongHocList.filter(item => !(item.maPhong === maPhong && item.tenPhong === tenPhong && item.sucChua === sucChua));
+            phongHocList = phongHocList.filter(item => item.maPhong !== maPhong);
             localStorage.setItem('phongHocList', JSON.stringify(phongHocList));
 
             row.remove();
