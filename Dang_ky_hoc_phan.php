@@ -373,12 +373,6 @@
         <div class="notification" id="notification"></div>
     </div>
     <script>
-        const maSinhVien = sessionStorage.getItem('maSinhVien') || 'SV001';
-        const registrationPeriod = {
-            start: new Date('2025-05-01T00:00:00'),
-            end: new Date('2025-05-30T23:59:59')
-        };
-
         document.addEventListener('DOMContentLoaded', () => {
             loadKhoa();
             loadNganh();
@@ -386,6 +380,11 @@
             loadHocPhan();
             loadThoiKhoaBieu();
         });
+
+        const registrationPeriod = {
+            start: new Date('2025-05-01T00:00:00'),
+            end: new Date('2025-05-30T23:59:59')
+        };
 
         function loadKhoa() {
             const khoaList = JSON.parse(localStorage.getItem('khoaList')) || [];
@@ -431,6 +430,7 @@
             const toaNhaList = JSON.parse(localStorage.getItem('toaNhaList')) || [];
             const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
             const sinhVienDangKyList = JSON.parse(localStorage.getItem('sinhVienDangKyList')) || [];
+            const maSinhVien = sessionStorage.getItem('maSinhVien');
 
             const selectedKhoa = document.getElementById('khoa').value;
             const selectedNganh = document.getElementById('nganh').value;
@@ -463,8 +463,8 @@
 
                     const tietTime = {
                         '1': '6:30 - 7:20', '2': '7:20 - 8:10', '3': '8:10 - 9:00', '4': '9:00 - 9:50',
-                        '5': '9:50 - 10:40', '6': '10:40 - 11:30', '7': '12:00 - 12:50', '8': '12:50 - 13:40',
-                        '9': '13:40 - 14:30', '10': '14:30 - 15:20', '11': '15:20 - 16:10', '12': '16:10 - 17:00'
+                        '5': '9:50 - 10:40', '6': '10:40 - 11:30', '7': '12:30 - 13:20', '8': '13:20 - 14:10',
+                        '9': '14:10 - 15:00', '10': '15:00 - 15:50', '11': '15:50 - 16:40', '12': '16:40 - 17:30'
                     };
 
                     const thoiGian = `${thuText}, Tiết ${dk.tietBatDau} - ${dk.tietKetThuc} (${tietTime[dk.tietBatDau].split(' - ')[0]} - ${tietTime[dk.tietKetThuc].split(' - ')[1]})`;
@@ -503,6 +503,7 @@
             const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
             const toaNhaList = JSON.parse(localStorage.getItem('toaNhaList')) || [];
             const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
+            const maSinhVien = sessionStorage.getItem('maSinhVien');
 
             const tbody = document.getElementById('bangThoiKhoaBieu').querySelector('tbody');
             tbody.innerHTML = '';
@@ -526,8 +527,8 @@
 
                     const tietTime = {
                         '1': '6:30 - 7:20', '2': '7:20 - 8:10', '3': '8:10 - 9:00', '4': '9:00 - 9:50',
-                        '5': '9:50 - 10:40', '6': '10:40 - 11:30', '7': '12:00 - 12:50', '8': '12:50 - 13:40',
-                        '9': '13:40 - 14:30', '10': '14:30 - 15:20', '11': '15:20 - 16:10', '12': '16:10 - 17:00'
+                        '5': '9:50 - 10:40', '6': '10:40 - 11:30', '7': '12:30 - 13:20', '8': '13:20 - 14:10',
+                        '9': '14:10 - 15:00', '10': '15:00 - 15:50', '11': '15:50 - 16:40', '12': '16:40 - 17:30'
                     };
 
                     const thoiGian = `${thuText}, Tiết ${dk.tietBatDau} - ${dk.tietKetThuc} (${tietTime[dk.tietBatDau].split(' - ')[0]} - ${tietTime[dk.tietKetThuc].split(' - ')[1]})`;
@@ -578,6 +579,7 @@
             const sinhVienDangKyList = JSON.parse(localStorage.getItem('sinhVienDangKyList')) || [];
             const hocPhanList = JSON.parse(localStorage.getItem('hocPhanList')) || [];
             const completedCourses = JSON.parse(localStorage.getItem('completedCourses')) || [];
+            const maSinhVien = sessionStorage.getItem('maSinhVien');
 
             const dk = dangKyHocPhanList.find(item => item.maHP === maHP && item.hocKy === hocKy);
             if (!dk) {

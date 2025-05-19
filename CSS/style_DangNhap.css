@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cổng đăng ký học phần</title>
-    <style>
+
         * {
         box-sizing: border-box;
         margin: 0;
@@ -23,7 +17,7 @@
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-image: url('anh_nen.jpg');
+            background-image: url('../Uploads/anh_nen.jpg');
             background-size: cover;
             background-position: center;
             height: 100vh;
@@ -153,73 +147,3 @@
                 font-size: 0.9rem;
             }
         }
-    </style>
-</head>
-<body>
-    <h1>CỔNG ĐĂNG KÝ HỌC PHẦN</h1>
-
-    <div class="login-box">
-        <h2>ĐĂNG NHẬP</h2>
-        <p>Cổng đăng ký học phần</p>
-        <form onsubmit="return handleLogin(event)">
-        <label for="username">Tên đăng nhập</label>
-        <input type="text" id="username" name="username" placeholder="Tên đăng nhập" required>
-
-        <label for="password">Mật khẩu</label>
-        <div class="password-container">
-            <input type="password" id="password" name="password" placeholder="Mật khẩu" required>
-            <span class="toggle-password" onclick="togglePassword()" id="toggleIcon">👁️</span>
-        </div>
-
-        <label class="remember-me">
-            <input type="checkbox" name="remember"> Nhớ mật khẩu
-        </label>
-
-        <button type="submit">Đăng nhập</button>
-        </form>
-    </div>
-
-    <script>
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const icon = document.getElementById('toggleIcon');
-
-            const start = passwordInput.selectionStart;
-            const end = passwordInput.selectionEnd;
-
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.textContent = '🙈'; // Mắt nhắm → hiện ký tự
-            } else {
-                passwordInput.type = 'password';
-                icon.textContent = '👁️'; // Mắt mở → hiện dấu chấm
-            }
-
-            passwordInput.focus();
-            passwordInput.setSelectionRange(start, end);
-        }
-
-
-        function handleLogin(event) {
-            event.preventDefault(); // Ngăn form gửi đi
-
-            const username = document.getElementById('username').value.trim().toLowerCase();
-            const password = document.getElementById('password').value.trim();
-
-            // Giả lập phân quyền dựa trên tên đăng nhập
-            if (username === 'admin' && password === 'admin123') {
-                window.location.href = 'Trang_chu_Admin.html';
-            } else if (username === 'giangvien' && password === 'gv123') {
-                window.location.href = 'trang_chu_giang_vien.html';
-            } else if (username === 'sinhvien' && password === 'sv123') {
-                window.location.href = 'trang_chu_sinh_vien.html';
-            } else {
-                alert('Sai tên đăng nhập hoặc mật khẩu.');
-            }
-
-            return false;
-        }
-    </script>
-</body>
-</html>
-
