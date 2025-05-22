@@ -1,3 +1,10 @@
+<?php
+    session_start();
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Quản trị viên') {
+        header("Location: Dang_Nhap.php");
+        exit();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý phòng học</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" href="CSS/style_TrangChuAdmin.css"/>
     <style>
         * {
             box-sizing: border-box;
@@ -147,7 +155,7 @@
             margin-right: 5px;
             padding: 5px 10px;
             border: none;
-            background-color: #2a4c96;
+            background-color: #4CAF50;
             color: white;
             cursor: pointer;
             border-radius: 4px;
@@ -159,7 +167,7 @@
             margin-right: 5px;
             padding: 5px 10px;
             border: none;
-            background-color: #cc4c4c;
+            background-color: #f44336;
             color: white;
             cursor: pointer;
             border-radius: 4px;
@@ -290,25 +298,31 @@
 <body>
     <div class="sidebar">
         <div class="user-info">
-            <div class="avatar"><img src="avatar-15.png" alt="avatar"></div>
-            <div class="details"><div class="role">Quản trị viên</div></div>
+            <div class="avatar"></div>
+            <div class="details">
+                <div class="role"><?php echo htmlspecialchars($_SESSION['full_name']); ?></div>
+                <div><?php echo htmlspecialchars($_SESSION['role']); ?></div>
+            </div>
         </div>
         <ul>
-            <li><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.html">Quản lý học phần</a></li>
-            <li><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.html">Phân công giảng viên</a></li>
-            <li class="active"><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.html">Quản lý phòng học</a></li>
-            <li><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.html">Đăng ký học phần</a></li>
+            <li><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.php">Quản lý học phần</a></li>
+            <li><i class="fas fa-graduation-cap"></i><a href="Quan_ly_LHP.php">Quản lý lớp học phần</a></li>
+            <li><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.php">Phân công giảng viên</a></li>
+            <li class="active"><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.php">Quản lý phòng học</a></li>
+            <li><i class="fas fa-users"></i><a href="Quan_ly_ND.php">Quản lý người dùng</a></li>
+            <li><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.php">Đăng ký học phần</a></li>
             <li><i class="fas fa-calendar-alt"></i><a href="#">Tra cứu lịch học</a></li>
-            <li><i class="fas fa-calendar-check"></i><a href="#">Xem thời khóa biểu</a></li>
-            <li><i class="fas fa-sign-out-alt"></i><a href="#" onclick="dangXuat()">Đăng xuất</a></li>
+            <li><i class="fas fa-calendar-check"></i><a href="TKB.php">Xem thời khóa biểu</a></li>
+            <li><i class="fas fa-chart-bar"></i><a href="Thongke_Baocao.php">Thống kê báo cáo</a></li>
+            <li><i class="fas fa-sign-out-alt"></i><a href="Controller/c_signout.php">Đăng xuất</a></li>
         </ul>
     </div>
     <div class="main">
         <header>
             <h1>QUẢN LÝ PHÒNG HỌC</h1>
             <div class="login">
-                Xin chào, Quản trị viên |
-                <a href="#" style="color: white;" onclick="dangXuat()"><i class="fas fa-sign-out-alt"></i></a>
+                Xin chào, <?php echo htmlspecialchars($_SESSION['full_name']); ?> |
+                <a href="Controller/c_signout.php" style="color: white;"><i class="fas fa-sign-out-alt"></i></a>
             </div>
         </header>
         <div class="container">
@@ -339,8 +353,8 @@
                         <td>Phòng học A1</td>
                         <td>50</td>
                         <td class="actions">
-                            <button class="edit-btn" onclick="chinhSuaDong(this)">Chỉnh sửa</button>
-                            <button class="delete-btn" onclick="xoaDong(this)">Xóa</button>
+                            <button class="edit-btn" onclick="chinhSuaDong(this)"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn" onclick="xoaDong(this)"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -377,7 +391,7 @@
         }
 
         function dangXuat() {
-            window.location.href = 'Dang_Nhap.html';
+            window.location.href = 'Dang_Nhap.php';
         }
 
         function themPhongHoc() {
@@ -426,9 +440,11 @@
                 <td>${maPhong}</td>
                 <td>${tenPhong}</td>
                 <td>${sucChua}</td>
-                <td class="actions">
-                    <button class="edit-btn" onclick="chinhSuaDong(this)">Chỉnh sửa</button>
-                    <button class="delete-btn" onclick="xoaDong(this)">Xóa</button>
+                <td>
+                    <div class="action-buttons">
+                        <button class="edit-btn" onclick="chinhSuaDong(this)"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" onclick="xoaDong(this)"><i class="fas fa-trash"></i></button>
+                    </div>
                 </td>
             `;
             tbody.appendChild(newRow);
@@ -457,7 +473,7 @@
             cells[2].innerHTML = `<input type="text" value="${tenPhong}" style="width: 100%;">`;
             cells[3].innerHTML = `<input type="number" value="${sucChua}" min="1" style="width: 100%;">`;
 
-            button.textContent = 'Lưu';
+            button.innerHTML = '<i class="fas fa-save"></i>';
             button.onclick = function () {
                 const select = row.querySelector('select');
                 const inputs = row.querySelectorAll('input');
@@ -497,7 +513,7 @@
                     localStorage.setItem('phongHocList', JSON.stringify(phongHocList));
                 }
 
-                this.textContent = 'Chỉnh sửa';
+                this.innerHTML = '<i class="fas fa-edit"></i>';
                 this.onclick = () => chinhSuaDong(this);
             };
         }
