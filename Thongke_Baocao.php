@@ -114,11 +114,7 @@
         <ul>
             <li><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.php">Quản lý học phần</a></li>
             <li><i class="fas fa-graduation-cap"></i><a href="Quan_ly_LHP.php">Quản lý lớp học phần</a></li>
-            <li><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.php">Phân công giảng viên</a></li>
-            <li><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.php">Quản lý phòng học</a></li>
             <li><i class="fas fa-users"></i><a href="Quan_ly_ND.php">Quản lý người dùng</a></li>
-            <li><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.php">Đăng ký học phần</a></li>
-            <li><i class="fas fa-calendar-check"></i><a href="TKB.php">Xem thời khóa biểu</a></li>
             <li class="active"><i class="fas fa-chart-bar"></i><a href="Thongke_Baocao.php">Thống kê báo cáo</a></li>
             <li><i class="fas fa-sign-out-alt"></i><a href="Controller/c_signout.php">Đăng xuất</a></li>
         </ul>
@@ -320,85 +316,106 @@
         </script>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Hàm cập nhật số liệu thống kê
-        function capNhatThongKe() {
-            const hocKy = document.getElementById('hocKy').value;
-            const namHoc = document.getElementById('namHoc').value;
+<script>
+    let thongKeChart;
 
-            if (!hocKy || !namHoc) {
-                alert('Vui lòng chọn đầy đủ học kỳ và năm học');
-                return;
-            }
+    function capNhatThongKe() {
+        const hocKy = document.getElementById('hocKy').value;
+        const namHoc = document.getElementById('namHoc').value;
 
-            // Giả lập dữ liệu thống kê
-            const data = {
-                sinhVien: Math.floor(Math.random() * 1000) + 500,
-                hocPhan: Math.floor(Math.random() * 50) + 20,
-                phongHoc: Math.floor(Math.random() * 20) + 10
-            };
-
-            // Cập nhật số liệu
-            document.getElementById('soLuongSV').textContent = data.sinhVien;
-            document.getElementById('soLuongHP').textContent = data.hocPhan;
-            document.getElementById('soLuongPH').textContent = data.phongHoc;
-
-            // Cập nhật biểu đồ
-            updateChart(data);
+        if (!hocKy || !namHoc) {
+            alert('Vui lòng chọn đầy đủ học kỳ và năm học');
+            return;
         }
 
-        // Khởi tạo biểu đồ
-        let myChart = null;
-
-        function updateChart(data) {
-            const ctx = document.getElementById('thongKeChart').getContext('2d');
-
-            // Hủy biểu đồ cũ nếu tồn tại
-            if (myChart) {
-                myChart.destroy();
-            }
-
-            // Tạo biểu đồ mới
-            myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Sinh viên', 'Học phần', 'Phòng học'],
-                    datasets: [{
-                        label: 'Thống kê số lượng',
-                        data: [data.sinhVien, data.hocPhan, data.phongHoc],
-                        backgroundColor: [
-                            'rgba(36, 81, 57, 0.7)',
-                            'rgba(36, 81, 57, 0.5)',
-                            'rgba(36, 81, 57, 0.3)'
-                        ],
-                        borderColor: [
-                            'rgba(36, 81, 57, 1)',
-                            'rgba(36, 81, 57, 1)',
-                            'rgba(36, 81, 57, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
+        // Giả lập dữ liệu thống kê
+        const data = {
+            tongSV: Math.floor(Math.random() * 1000) + 500,
+            daDK: Math.floor(Math.random() * 800) + 200,
+            tyLeLapDay: Math.floor(Math.random() * 100),
+            hocPhanRong: Math.floor(Math.random() * 10),
+            chiTietHP: [
+                {
+                    maHP: 'HP001',
+                    tenHP: 'Lập trình web',
+                    siSoToiDa: 50,
+                    soLuongDK: 45
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                {
+                    maHP: 'HP002',
+                    tenHP: 'Cơ sở dữ liệu',
+                    siSoToiDa: 40,
+                    soLuongDK: 38
+                },
+                {
+                    maHP: 'HP003',
+                    tenHP: 'Cấu trúc dữ liệu',
+                    siSoToiDa: 60,
+                    soLuongDK: 52
+                }
+            ]
+        };
+
+        // Cập nhật số liệu
+        document.getElementById('soLuongSV').textContent = data.tongSV;
+        document.getElementById('soLuongDK').textContent = data.daDK;
+        document.getElementById('soLuongChuaDK').textContent = data.tongSV - data.daDK;
+        document.getElementById('tyLeLapDay').textContent = data.tyLeLapDay + '%';
+        document.getElementById('hocPhanRong').textContent = data.hocPhanRong;
+
+        // Cập nhật bảng chi tiết
+        const tbody = document.querySelector('#bangChiTiet tbody');
+        tbody.innerHTML = '';
+        data.chiTietHP.forEach(hp => {
+            const tyLe = Math.round((hp.soLuongDK / hp.siSoToiDa) * 100);
+            tbody.innerHTML += `
+                <tr>
+                    <td>${hp.maHP}</td>
+                    <td>${hp.tenHP}</td>
+                    <td>${hp.siSoToiDa}</td>
+                    <td>${hp.soLuongDK}</td>
+                    <td>${tyLe}%</td>
+                </tr>
+            `;
+        });
+
+        // Cập nhật biểu đồ
+        const labels = data.chiTietHP.map(hp => hp.tenHP);
+        const values = data.chiTietHP.map(hp => hp.soLuongDK);
+
+        if (thongKeChart) {
+            thongKeChart.destroy();
+        }
+
+        const ctx = document.getElementById('thongKeChart').getContext('2d');
+        thongKeChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Số lượng đăng ký',
+                    data: values,
+                    backgroundColor: '#245139'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 5
                         }
                     }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 }
-            });
-        }
-
-        // Khởi tạo trang
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tạo biểu đồ trống ban đầu
-            updateChart({
-                sinhVien: 0,
-                hocPhan: 0,
-                phongHoc: 0
-            });
+            }
         });
-    </script>
+    }
+</script>
 </body>
 </html>
