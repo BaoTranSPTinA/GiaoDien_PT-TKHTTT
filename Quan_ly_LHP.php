@@ -141,7 +141,6 @@ $isLecturer = $_SESSION['role'] === 'Giảng viên';
             <?php endif; ?>
             
             <li><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.php">Đăng ký học phần</a></li>
-            <li><i class="fas fa-calendar-alt"></i><a href="#">Tra cứu lịch học</a></li>
             <li><i class="fas fa-calendar-check"></i><a href="TKB.php">Xem thời khóa biểu</a></li>
             <li><i class="fas fa-chart-bar"></i><a href="Thongke_Baocao.php">Thống kê báo cáo</a></li>
             <li><i class="fas fa-sign-out-alt"></i><a href="Controller/c_signout.php">Đăng xuất</a></li>
