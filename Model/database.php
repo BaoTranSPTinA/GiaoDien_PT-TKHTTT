@@ -130,5 +130,21 @@ class Database
             $this->conn->close();
         }
     }
+    public function execute_prepared_query($types, $params)
+{
+    if (!$this->stmt) {
+        throw new Exception("Không có câu lệnh nào được chuẩn bị");
+    }
+
+    // bind_param chỉ chấp nhận tham số tham chiếu
+    $this->stmt->bind_param($types, ...$params);
+
+    if (!$this->stmt->execute()) {
+        throw new Exception("Thực thi câu lệnh thất bại: " . $this->stmt->error);
+    }
+
+    return true;
+}
+
 }
 ?>

@@ -1,9 +1,12 @@
 <?php
-require_once("database.php");
+
+require_once 'database.php';
 
 /*----------Tạo bảng Users------------*/
-class initDatabaseUsers extends Database {
-    public function create_structure() {
+class initDatabaseUsers extends Database
+{
+    public function create_structure()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS Users (
             user_id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(50) NOT NULL UNIQUE,
@@ -20,19 +23,60 @@ class initDatabaseUsers extends Database {
 
         echo "INIT Users COMPLETE\n";
     }
+public function create_default_admin()
+{
+    $username = 'admin';
+    $password = 'admin123'; // Không mã hóa
+    $full_name = 'Administrator';
+    $email = 'admin@example.com';
+    $phone_number = '0123456789';
+    $role = 'Quản trị viên';
+
+    $sql = "INSERT INTO Users (username, password, full_name, email, phone_number, role)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE user_id=user_id";
+
+    $this->set_query($sql);
+    $params = [$username, $password, $full_name, $email, $phone_number, $role];
+    $this->execute_prepared_query('ssssss', $params);
+
+    echo "DEFAULT ADMIN CREATED\n";
+}
+    public function create_default_sv()
+{
+    $username = 'sv';
+    $password = 'admin123'; // Không mã hóa
+    $full_name = 'sv';
+    $email = 'sv@example.com';
+    $phone_number = '0369155068';
+    $role = 'Sinh viên';
+
+    $sql = "INSERT INTO Users (username, password, full_name, email, phone_number, role)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE user_id=user_id";
+
+    $this->set_query($sql);
+    $params = [$username, $password, $full_name, $email, $phone_number, $role];
+    $this->execute_prepared_query('ssssss', $params);
+
+    echo "DEFAULT sv CREATED\n";
+}
 }
 
 $myinit = new initDatabaseUsers();
 $myinit->create_structure();
-
+$myinit->create_default_admin();
+$myinit->create_default_sv();
 /*----------Tạo bảng Khoa------------*/
-class initDatabaseKhoa extends Database {
-    public function create_structure() {
-        $sql = "CREATE TABLE IF NOT EXISTS Khoa (
+class initDatabaseKhoa extends Database
+{
+    public function create_structure()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS Khoa (
             ma_khoa VARCHAR(10) PRIMARY KEY,
             ten_khoa VARCHAR(100) NOT NULL,
             create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )";
+        )';
 
         $this->set_query($sql);
         $this->execute_query();
@@ -45,12 +89,14 @@ $myinit = new initDatabaseKhoa();
 $myinit->create_structure();
 
 /*----------Tạo bảng HocKy------------*/
-class initDatabaseHocKy extends Database {
-    public function create_structure() {
-        $sql = "CREATE TABLE IF NOT EXISTS HocKy (
+class initDatabaseHocKy extends Database
+{
+    public function create_structure()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS HocKy (
             hoc_ky VARCHAR(10) PRIMARY KEY,
             create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )";
+        )';
 
         $this->set_query($sql);
         $this->execute_query();
@@ -63,8 +109,10 @@ $myinit = new initDatabaseHocKy();
 $myinit->create_structure();
 
 /*----------Tạo bảng HocPhan------------*/
-class initDatabaseHocPhan extends Database {
-    public function create_structure() {
+class initDatabaseHocPhan extends Database
+{
+    public function create_structure()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS HocPhan (
             ma_hp VARCHAR(10) PRIMARY KEY,
             ten_hp VARCHAR(100) NOT NULL,
@@ -90,9 +138,11 @@ $myinit = new initDatabaseHocPhan();
 $myinit->create_structure();
 
 /*----------Tạo bảng GiangVien------------*/
-class initDatabaseGiangVien extends Database {
-    public function create_structure() {
-        $sql = "CREATE TABLE IF NOT EXISTS GiangVien (
+class initDatabaseGiangVien extends Database
+{
+    public function create_structure()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS GiangVien (
             ma_gv VARCHAR(10) PRIMARY KEY,
             ten_gv VARCHAR(100) NOT NULL,
             email VARCHAR(100) NOT NULL UNIQUE,
@@ -102,7 +152,7 @@ class initDatabaseGiangVien extends Database {
             create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (ma_khoa) REFERENCES Khoa(ma_khoa),
             FOREIGN KEY (user_id) REFERENCES Users(user_id)
-        )";
+        )';
 
         $this->set_query($sql);
         $this->execute_query();
@@ -115,9 +165,11 @@ $myinit = new initDatabaseGiangVien();
 $myinit->create_structure();
 
 /*----------Tạo bảng PhanCong------------*/
-class initDatabasePhanCong extends Database {
-    public function create_structure() {
-        $sql = "CREATE TABLE IF NOT EXISTS PhanCong (
+class initDatabasePhanCong extends Database
+{
+    public function create_structure()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS PhanCong (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             ma_khoa VARCHAR(10) NOT NULL,
             ma_hp VARCHAR(10) NOT NULL,
@@ -132,7 +184,7 @@ class initDatabasePhanCong extends Database {
             FOREIGN KEY (ma_hp) REFERENCES HocPhan(ma_hp),
             FOREIGN KEY (ma_gv) REFERENCES GiangVien(ma_gv),
             FOREIGN KEY (hoc_ky) REFERENCES HocKy(hoc_ky)
-        )";
+        )';
 
         $this->set_query($sql);
         $this->execute_query();
@@ -145,9 +197,11 @@ $myinit = new initDatabasePhanCong();
 $myinit->create_structure();
 
 /*----------Tạo bảng DangKyHocPhan------------*/
-class initDatabaseDangKyHocPhan extends Database {
-    public function create_structure() {
-        $sql = "CREATE TABLE IF NOT EXISTS DangKyHocPhan (
+class initDatabaseDangKyHocPhan extends Database
+{
+    public function create_structure()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS DangKyHocPhan (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             user_id INT(6) UNSIGNED NOT NULL,
             ma_hp VARCHAR(10) NOT NULL,
@@ -158,7 +212,7 @@ class initDatabaseDangKyHocPhan extends Database {
             FOREIGN KEY (ma_hp) REFERENCES HocPhan(ma_hp),
             FOREIGN KEY (ma_lop) REFERENCES PhanCong(ma_lop),
             FOREIGN KEY (hoc_ky) REFERENCES HocKy(hoc_ky)
-        )";
+        )';
 
         $this->set_query($sql);
         $this->execute_query();
@@ -169,4 +223,3 @@ class initDatabaseDangKyHocPhan extends Database {
 
 $myinit = new initDatabaseDangKyHocPhan();
 $myinit->create_structure();
-?>

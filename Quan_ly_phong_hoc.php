@@ -332,7 +332,7 @@
                 </select>
                 <input type="text" id="maPhong" placeholder="Mã phòng học (VD: P101)">
                 <input type="text" id="tenPhong" placeholder="Tên phòng học (VD: Phòng học A1)">
-                <input type="number" id="sucChua" placeholder="Sức chứa (VD: 50)" min="1">
+                <input type="number" id="sucChua" placeholder="Sức chứa (VD: 50)" min="1" max="50">
                 <button onclick="themPhongHoc()">Thêm</button>
             </div>
             <table id="bangPhongHoc">

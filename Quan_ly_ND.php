@@ -132,10 +132,14 @@
 <body>
     <?php
     session_start();
+    require_once 'Model/database.php';
+    require_once 'Model/m_User.php';
     if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Quản trị viên') {
         header("Location: Dang_Nhap.php");
         exit();
     }
+    $userModel = new User();
+    $users = $userModel->list_all_user();
     ?>
     <div class="sidebar">
         <div class="user-info">
@@ -168,8 +172,64 @@
         </header>
         <main>
             <div class="content">
-                <button class="add-btn"><i class="fas fa-user-plus"></i> Thêm người dùng mới</button>
+                <button class="add-btn" onclick="document.getElementById('addUserModal').style.display='block'"><i class="fas fa-user-plus"></i> Thêm người dùng mới</button>
+                <div id="addUserModal" style="display:none;">
+                    <form action="Controller/c_addUser.php" method="POST">
+                        <input type="text" name="full_name" placeholder="Họ và tên" required>
+                        <input type="text" name="username" placeholder="Tên đăng nhập" required>
+                        <input type="password" name="password" placeholder="Mật khẩu" required>
+                        <input type="email" name="email" placeholder="Email" required>
+                        <input type="text" name="phone_number" placeholder="Số điện thoại" required>
+                        <select name="role" required>
+                            <option value="Quản trị viên">Quản trị viên</option>
+                            <option value="Giảng viên">Giảng viên</option>
+                            <option value="Sinh viên">Sinh viên</option>
+                        </select>
+                        <button type="submit">Thêm</button>
+                        <button type="button" onclick="document.getElementById('addUserModal').style.display='none'">Hủy</button>
+                    </form>
+                </div>
                 
+                <div id="editUserModal" style="display:none;">
+                    <form action="Controller/c_editUser.php" method="POST">
+                        <input type="hidden" name="user_id" id="edit_user_id">
+                        <input type="text" name="full_name" id="edit_full_name" placeholder="Họ và tên" required>
+                        <input type="text" name="username" id="edit_username" placeholder="Tên đăng nhập" required>
+                        <input type="email" name="email" id="edit_email" placeholder="Email" required>
+                        <input type="text" name="phone_number" id="edit_phone_number" placeholder="Số điện thoại" required>
+                        <select name="role" id="edit_role" required>
+                            <option value="Quản trị viên">Quản trị viên</option>
+                            <option value="Giảng viên">Giảng viên</option>
+                            <option value="Sinh viên">Sinh viên</option>
+                        </select>
+                        <button type="submit">Cập nhật</button>
+                        <button type="button" onclick="document.getElementById('editUserModal').style.display='none'">Hủy</button>
+                    </form>
+                </div>
+                <script>
+                    function openEditModal(userId) {
+                        fetch(`Controller/c_editUser.php?user_id=${userId}`)
+                        .then(response => response.json())
+                        .then(user => {
+                            if (user.error) {
+                                alert(user.error);
+                            } else {
+                                document.getElementById('edit_user_id').value = user.user_id;
+                                document.getElementById('edit_full_name').value = user.full_name;
+                                document.getElementById('edit_username').value = user.username;
+                                document.getElementById('edit_email').value = user.email;
+                                document.getElementById('edit_phone_number').value = user.phone_number;
+                                document.getElementById('edit_role').value = user.role;
+                                document.getElementById('editUserModal').style.display = 'block';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching user data:', error);
+                            alert('Failed to fetch user data.');
+                        });
+                    }
+                </script>
+                    
                 <div class="search-bar">
                     <input type="text" placeholder="Tìm kiếm người dùng...">
                     <button><i class="fas fa-search"></i> Tìm kiếm</button>
@@ -182,58 +242,42 @@
                             <th>Họ và tên</th>
                             <th>Tên đăng nhập</th>
                             <th>Email</th>
-                            <th>Vai trò</th>
+                         <th>Vai trò</th>
                             <th>Trạng thái</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <tbody>
+                        <?php foreach ($users as $user): ?>
                         <tr>
-                            <td>ADMIN001</td>
-                            <td>Nguyễn Văn A</td>
-                            <td>nguyenvana</td>
-                            <td>nguyenvana@example.com</td>
-                            <td><span class="role-badge role-admin">Quản trị viên</span></td>
+                            <td><?php echo htmlspecialchars($user['user_id']); ?></td>
+                            <td><?php echo htmlspecialchars($user['full_name']); ?></td>
+                            <td><?php echo htmlspecialchars($user['username']); ?></td>
+                            <td><?php echo htmlspecialchars($user['email']); ?></td>
+                            <td>
+                                <span class="role-badge role-<?php echo strtolower($user['role']); ?>">
+                                    <?php echo htmlspecialchars($user['role']); ?>
+                                </span>
+                            </td>
                             <td>Hoạt động</td>
                             <td>
-                                <div class="action-buttons">
-                                    <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                            <div class="action-buttons">
+                                <button class="edit-btn" onclick="openEditModal(<?php echo htmlspecialchars($user['user_id']); ?>)"><i class="fas fa-edit"></i></button>
+                                <form action="Controller/c_deleteUser.php" method="POST" style="display:inline;">
+                                    <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user['user_id']); ?>">
                                     <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
+                                </form>
+                            </div>
+                        </td>
                         </tr>
-                        <tr>
-                            <td>GV002</td>
-                            <td>Trần Thị B</td>
-                            <td>tranthib</td>
-                            <td>tranthib@example.com</td>
-                            <td><span class="role-badge role-lecturer">Giảng viên</span></td>
-                            <td>Hoạt động</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="edit-btn"><i class="fas fa-edit"></i></button>
-                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>SV003</td>
-                            <td>Lê Văn C</td>
-                            <td>levanc</td>
-                            <td>levanc@example.com</td>
-                            <td><span class="role-badge role-student">Sinh viên</span></td>
-                            <td>Hoạt động</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="edit-btn"><i class="fas fa-edit"></i></button>
-                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
-    </div>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
 </body>
 </html>
+</tbody>
+<!-- Edit User Modal -->
