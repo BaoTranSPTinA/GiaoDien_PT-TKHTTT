@@ -320,14 +320,20 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Quản trị viên') {
             </div>
         </div>
         <ul>
+        <?php if ($_SESSION['role'] === 'Quản trị viên') { ?>
             <li class="active"><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.php">Quản lý học phần</a></li>
             <li><i class="fas fa-graduation-cap"></i><a href="Quan_ly_LHP.php">Quản lý lớp học phần</a></li>
             <li><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.php">Phân công giảng viên</a></li>
             <li><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.php">Quản lý phòng học</a></li>
             <li><i class="fas fa-users"></i><a href="Quan_ly_ND.php">Quản lý người dùng</a></li>
+            <li><i class="fas fa-chart-bar"></i><a href="Thongke_Baocao.php">Thống kê báo cáo</a></li>
+        <?php } elseif ($_SESSION['role'] === 'Sinh viên') { ?>
             <li><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.php">Đăng ký học phần</a></li>
             <li><i class="fas fa-calendar-check"></i><a href="TKB.php">Xem thời khóa biểu</a></li>
-            <li><i class="fas fa-chart-bar"></i><a href="Thongke_Baocao.php">Thống kê báo cáo</a></li>
+        <?php } elseif ($_SESSION['role'] === 'Giảng viên') { ?>
+            <li><i class="fas fa-graduation-cap"></i><a href="Quan_ly_LHP.php">Quản lý lớp học</a></li>
+            <li><i class="fas fa-calendar-check"></i><a href="TKB.php">Xem lịch dạy</a></li>
+        <?php } ?>
             <li><i class="fas fa-sign-out-alt"></i><a href="Controller/c_signout.php">Đăng xuất</a></li>
         </ul>
     </div>
@@ -382,22 +388,78 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Quản trị viên') {
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Khởi tạo dữ liệu mẫu
-            const khoaList = JSON.parse(localStorage.getItem('khoaList')) || [
-                { maKhoa: 'CNTT', tenKhoa: 'Công Nghệ Thông Tin' }
-            ];
-            localStorage.setItem('khoaList', JSON.stringify(khoaList));
+            // Dữ liệu mẫu
+            const sampleData = {
+                khoaList: [
+                    { maKhoa: 'CNTT', tenKhoa: 'Công Nghệ Thông Tin' },
+                    { maKhoa: 'SP', tenKhoa: 'Sư Phạm' },
+                    { maKhoa: 'KT', tenKhoa: 'Kinh Tế' }
+                ],
+                nganhList: [
+                    { maNganh: 'CNTT', maKhoa: 'CNTT', tenNganh: 'Công Nghệ Thông Tin' },
+                    { maNganh: 'SPTH', maKhoa: 'CNTT', tenNganh: 'Sư Phạm Tin Học' },
+                    { maNganh: 'SPNN', maKhoa: 'SP', tenNganh: 'Sư Phạm Ngữ Văn' },
+                    { maNganh: 'KTQD', maKhoa: 'KT', tenNganh: 'Kinh Tế Quốc Dân' }
+                ],
+                hocKyList: [
+                    '2024-1',
+                    '2024-2',
+                    '2025-1',
+                    '2025-2'
+                ],
+                hocPhanList: [
+                    {
+                        ma: 'IT101',
+                        ten: 'Lập trình cơ bản',
+                        soTinChi: 3,
+                        siSoToiDa: 50,
+                        dieuKienTienQuyet: null,
+                        khoa: 'CNTT',
+                        nganh: 'CNTT',
+                        hocKy: '2024-1',
+                        trangThai: 'Đã công bố'
+                    },
+                    {
+                        ma: 'IT102',
+                        ten: 'Cấu trúc dữ liệu',
+                        soTinChi: 4,
+                        siSoToiDa: 40,
+                        dieuKienTienQuyet: 'IT101',
+                        khoa: 'CNTT',
+                        nganh: 'CNTT',
+                        hocKy: '2024-2',
+                        trangThai: 'Chưa công bố'
+                    },
+                    {
+                        ma: 'SP101',
+                        ten: 'Ngữ văn 1',
+                        soTinChi: 3,
+                        siSoToiDa: 45,
+                        dieuKienTienQuyet: null,
+                        khoa: 'SP',
+                        nganh: 'SPNN',
+                        hocKy: '2024-1',
+                        trangThai: 'Đã công bố'
+                    },
+                    {
+                        ma: 'KT101',
+                        ten: 'Kinh tế vi mô',
+                        soTinChi: 3,
+                        siSoToiDa: 60,
+                        dieuKienTienQuyet: null,
+                        khoa: 'KT',
+                        nganh: 'KTQD',
+                        hocKy: '2025-1',
+                        trangThai: 'Chưa công bố'
+                    }
+                ]
+            };
 
-            const nganhList = JSON.parse(localStorage.getItem('nganhList')) || [
-                { maNganh: 'CNTT', maKhoa: 'CNTT', tenNganh: 'Công Nghệ Thông Tin' },
-                { maNganh: 'SPTH', maKhoa: 'CNTT', tenNganh: 'Sư Phạm Tin Học' }
-            ];
-            localStorage.setItem('nganhList', JSON.stringify(nganhList));
-
-            const hocKyList = JSON.parse(localStorage.getItem('hocKyList')) || [
-                '2024-1', '2024-2', '2025-1', '2025-2'
-            ];
-            localStorage.setItem('hocKyList', JSON.stringify(hocKyList));
+            // Khởi tạo dữ liệu mẫu vào localStorage
+            localStorage.setItem('khoaList', JSON.stringify(sampleData.khoaList));
+            localStorage.setItem('nganhList', JSON.stringify(sampleData.nganhList));
+            localStorage.setItem('hocKyList', JSON.stringify(sampleData.hocKyList));
+            localStorage.setItem('hocPhanList', JSON.stringify(sampleData.hocPhanList));
 
             loadKhoa();
             loadNganh();

@@ -1,10 +1,3 @@
-<?php
-session_start();
-if (!isset($_SESSION['role'])) {
-    header("Location: Dang_Nhap.php");
-    exit();
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -140,6 +133,17 @@ if (!isset($_SESSION['role'])) {
             border-radius: 4px;
             width: 200px;
         }
+        .filter-form button {
+            padding: 8px 16px;
+            background-color: #245139;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .filter-form button:hover {
+            background-color: #1e4030;
+        }
         .timetable-btn {
             padding: 8px 16px;
             background-color: #245139;
@@ -258,6 +262,9 @@ if (!isset($_SESSION['role'])) {
             .filter-form select {
                 width: 100%;
             }
+            .filter-form button {
+                width: 100%;
+            }
             .timetable-btn {
                 width: 100%;
             }
@@ -311,24 +318,17 @@ if (!isset($_SESSION['role'])) {
     </style>
 </head>
 <body>
-
     <div class="sidebar">
         <div class="user-info">
             <div class="avatar"></div>
             <div class="details">
-                <div class="role"><?php echo htmlspecialchars($_SESSION['full_name']); ?></div>
-                <div><?php echo htmlspecialchars($_SESSION['role']); ?></div>
+                <div class="role">Nguyễn Văn A</div>
+                <div>Sinh viên</div>
             </div>
         </div>
         <ul>
-        <li><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.php">Quản lý học phần</a></li>
-            <li><i class="fas fa-graduation-cap"></i><a href="Quan_ly_LHP.php">Quản lý lớp học phần</a></li>
-            <li><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.php">Phân công giảng viên</a></li>
-            <li><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.php">Quản lý phòng học</a></li>
-            <li><i class="fas fa-users"></i><a href="Quan_ly_ND.php">Quản lý người dùng</a></li>
             <li class="active"><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.php">Đăng ký học phần</a></li>
             <li><i class="fas fa-calendar-check"></i><a href="TKB.php">Xem thời khóa biểu</a></li>
-            <li><i class="fas fa-chart-bar"></i><a href="Thongke_Baocao.php">Thống kê báo cáo</a></li>
             <li><i class="fas fa-sign-out-alt"></i><a href="Controller/c_signout.php">Đăng xuất</a></li>
         </ul>
     </div>
@@ -336,7 +336,7 @@ if (!isset($_SESSION['role'])) {
         <header>
             <h1>ĐĂNG KÝ HỌC PHẦN</h1>
             <div class="login">
-                Xin chào, <?php echo htmlspecialchars($_SESSION['full_name']); ?> |
+                Xin chào, Nguyễn Văn A |
                 <a href="Controller/c_signout.php" style="color: white;"><i class="fas fa-sign-out-alt"></i></a>
             </div>
         </header>
@@ -357,15 +357,16 @@ if (!isset($_SESSION['role'])) {
                 </table>
             </div>
             <div class="filter-form">
-                <select id="khoa" onchange="filterHocPhan()">
+                <select id="khoa">
                     <option value="" selected>Tất cả khoa</option>
                 </select>
-                <select id="nganh" onchange="filterHocPhan()">
+                <select id="nganh">
                     <option value="" selected>Tất cả ngành</option>
                 </select>
-                <select id="hocKy" onchange="filterHocPhan()">
+                <select id="hocKy">
                     <option value="" selected>Tất cả học kỳ</option>
                 </select>
+                <button onclick="filterHocPhan()">Áp dụng</button>
             </div>
             <table id="bangDangKyHocPhan">
                 <thead>
@@ -387,7 +388,171 @@ if (!isset($_SESSION['role'])) {
         <div class="notification" id="notification"></div>
     </div>
     <script>
+        // Dữ liệu mẫu
+        const sampleData = {
+            khoaList: [
+                { maKhoa: "CNTT", tenKhoa: "Công Nghệ Thông Tin" },
+                { maKhoa: "SP", tenKhoa: "Sư Phạm" },
+                { maKhoa: "KT", tenKhoa: "Kinh Tế" }
+            ],
+            nganhList: [
+                { maNganh: "CNTT", tenNganh: "Công Nghệ Thông Tin", maKhoa: "CNTT" },
+                { maNganh: "KHMT", tenNganh: "Khoa Học Máy Tính", maKhoa: "CNTT" },
+                { maNganh: "SPNN", tenNganh: "Sư Phạm Ngữ Văn", maKhoa: "SP" },
+                { maNganh: "KTQD", tenNganh: "Kinh Tế Quốc Dân", maKhoa: "KT" }
+            ],
+            hocPhanList: [
+                {
+                    ma: "IT101",
+                    ten: "Lập trình cơ bản",
+                    soTinChi: 3,
+                    siSoToiDa: 50,
+                    dieuKienTienQuyet: null,
+                    khoa: "CNTT",
+                    nganh: "CNTT",
+                    hocKy: "2025-1",
+                    trangThai: "Đã công bố"
+                },
+                {
+                    ma: "IT102",
+                    ten: "Cấu trúc dữ liệu",
+                    soTinChi: 4,
+                    siSoToiDa: 40,
+                    dieuKienTienQuyet: "IT101",
+                    khoa: "CNTT",
+                    nganh: "CNTT",
+                    hocKy: "2025-1",
+                    trangThai: "Đã công bố"
+                },
+                {
+                    ma: "SP101",
+                    ten: "Ngữ văn 1",
+                    soTinChi: 3,
+                    siSoToiDa: 45,
+                    dieuKienTienQuyet: null,
+                    khoa: "SP",
+                    nganh: "SPNN",
+                    hocKy: "2025-1",
+                    trangThai: "Đã công bố"
+                },
+                {
+                    ma: "KT101",
+                    ten: "Kinh tế vi mô",
+                    soTinChi: 3,
+                    siSoToiDa: 60,
+                    dieuKienTienQuyet: null,
+                    khoa: "KT",
+                    nganh: "KTQD",
+                    hocKy: "2025-1",
+                    trangThai: "Đã công bố"
+                }
+            ],
+            dangKyHocPhanList: [
+                {
+                    maHP: "IT101",
+                    maLop: "HP001_01",
+                    tenHP: "Lập trình cơ bản",
+                    soTinChi: 3,
+                    siSoToiDa: 50,
+                    dieuKienTienQuyet: null,
+                    khoa: "CNTT",
+                    nganh: "CNTT",
+                    hocKy: "2025-1",
+                    maGV: "GV001",
+                    thu: "2",
+                    tietBatDau: "1",
+                    tietKetThuc: "3",
+                    siSoHienTai: 0,
+                    toaNha: "T01",
+                    maPhong: "P101"
+                },
+                {
+                    maHP: "IT102",
+                    maLop: "HP002_01",
+                    tenHP: "Cấu trúc dữ liệu",
+                    soTinChi: 4,
+                    siSoToiDa: 40,
+                    dieuKienTienQuyet: "IT101",
+                    khoa: "CNTT",
+                    nganh: "CNTT",
+                    hocKy: "2025-1",
+                    maGV: "GV002",
+                    thu: "3",
+                    tietBatDau: "4",
+                    tietKetThuc: "6",
+                    siSoHienTai: 0,
+                    toaNha: "T02",
+                    maPhong: "P201"
+                },
+                {
+                    maHP: "SP101",
+                    maLop: "HP003_01",
+                    tenHP: "Ngữ văn 1",
+                    soTinChi: 3,
+                    siSoToiDa: 45,
+                    dieuKienTienQuyet: null,
+                    khoa: "SP",
+                    nganh: "SPNN",
+                    hocKy: "2025-1",
+                    maGV: "GV003",
+                    thu: "4",
+                    tietBatDau: "7",
+                    tietKetThuc: "9",
+                    siSoHienTai: 0,
+                    toaNha: "T03",
+                    maPhong: "P301"
+                },
+                {
+                    maHP: "KT101",
+                    maLop: "HP004_01",
+                    tenHP: "Kinh tế vi mô",
+                    soTinChi: 3,
+                    siSoToiDa: 60,
+                    dieuKienTienQuyet: null,
+                    khoa: "KT",
+                    nganh: "KTQD",
+                    hocKy: "2025-1",
+                    maGV: "GV004",
+                    thu: "5",
+                    tietBatDau: "1",
+                    tietKetThuc: "3",
+                    siSoHienTai: 0,
+                    toaNha: "T01",
+                    maPhong: "P101"
+                }
+            ],
+            sinhVienDangKyList: [
+                { maSinhVien: "SV001", maHP: "IT101", hocKy: "2025-1" },
+                { maSinhVien: "SV002", maHP: "IT101", hocKy: "2025-1" },
+                { maSinhVien: "SV001", maHP: "SP101", hocKy: "2025-1" }
+            ],
+            completedCourses: [
+                { maSinhVien: "SV001", maHP: "IT101", status: "Đã qua" }
+            ],
+            toaNhaList: [
+                { maToa: "T01", tenToa: "Tòa A" },
+                { maToa: "T02", tenToa: "Tòa B" },
+                { maToa: "T03", tenToa: "Tòa C" }
+            ],
+            phongHocList: [
+                { toaNha: "T01", maPhong: "P101", tenPhong: "Phòng học A1", sucChua: 50 },
+                { toaNha: "T02", maPhong: "P201", tenPhong: "Phòng học B1", sucChua: 40 },
+                { toaNha: "T03", maPhong: "P301", tenPhong: "Phòng học C1", sucChua: 30 }
+            ]
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
+            // Đảm bảo xóa dữ liệu cũ trong localStorage trước khi lưu dữ liệu mới
+            Object.keys(sampleData).forEach(key => {
+                localStorage.removeItem(key);
+                localStorage.setItem(key, JSON.stringify(sampleData[key]));
+            });
+
+            // Giả lập mã sinh viên
+            if (!sessionStorage.getItem('maSinhVien')) {
+                sessionStorage.setItem('maSinhVien', 'SV001');
+            }
+
             loadKhoa();
             loadNganh();
             loadHocKy();
@@ -403,6 +568,7 @@ if (!isset($_SESSION['role'])) {
         function loadKhoa() {
             const khoaList = JSON.parse(localStorage.getItem('khoaList')) || [];
             const selectKhoa = document.getElementById('khoa');
+            selectKhoa.innerHTML = '<option value="" selected>Tất cả khoa</option>';
             khoaList.forEach(khoa => {
                 const option = document.createElement('option');
                 option.value = khoa.maKhoa;
@@ -428,6 +594,7 @@ if (!isset($_SESSION['role'])) {
             const dangKyHocPhanList = JSON.parse(localStorage.getItem('dangKyHocPhanList')) || [];
             const hocKyList = [...new Set(dangKyHocPhanList.map(dk => dk.hocKy))];
             const selectHocKy = document.getElementById('hocKy');
+            selectHocKy.innerHTML = '<option value="" selected>Tất cả học kỳ</option>';
             hocKyList.forEach(hocKy => {
                 const option = document.createElement('option');
                 option.value = hocKy;
@@ -453,62 +620,78 @@ if (!isset($_SESSION['role'])) {
             const tbody = document.getElementById('bangDangKyHocPhan').querySelector('tbody');
             tbody.innerHTML = '';
 
-            dangKyHocPhanList
+            // Kiểm tra dữ liệu
+            if (!dangKyHocPhanList.length || !hocPhanList.length) {
+                showNotification('Không có dữ liệu lớp học phần để hiển thị.', true);
+                return;
+            }
+
+            const filteredHocPhan = dangKyHocPhanList
                 .filter(dk => {
                     const hp = hocPhanList.find(item => item.ma === dk.maHP && item.hocKy === dk.hocKy);
-                    return hp?.trangThai === 'Đã công bố' &&
-                           (!selectedKhoa || dk.khoa === selectedKhoa) &&
-                           (!selectedNganh || dk.nganh === selectedNganh) &&
-                           (!selectedHocKy || dk.hocKy === selectedHocKy);
-                })
-                .forEach(dk => {
-                    const tenKhoa = khoaList.find(k => k.maKhoa === dk.khoa)?.tenKhoa || dk.khoa;
-                    const tenNganh = nganhList.find(n => n.maNganh === dk.nganh)?.tenNganh || dk.nganh;
-                    const hp = hocPhanList.find(item => item.ma === dk.maHP);
-                    const tenToa = toaNhaList.find(t => t.maToa === dk.toaNha)?.tenToa || dk.toaNha;
-                    const phong = phongHocList.find(p => p.maPhong === dk.maPhong);
-                    const tenHP = hp ? `${dk.maHP} - ${hp.ten}` : dk.maHP;
-                    const tenPhong = phong ? `${dk.maPhong} - ${phong.tenPhong}` : dk.maPhong;
-
-                    const thuText = {
-                        '2': 'Thứ 2', '3': 'Thứ 3', '4': 'Thứ 4', '5': 'Thứ 5',
-                        '6': 'Thứ 6', '7': 'Thứ 7', '8': 'Chủ nhật'
-                    }[dk.thu];
-
-                    const tietTime = {
-                        '1': '6:30 - 7:20', '2': '7:20 - 8:10', '3': '8:10 - 9:00', '4': '9:00 - 9:50',
-                        '5': '9:50 - 10:40', '6': '10:40 - 11:30', '7': '12:30 - 13:20', '8': '13:20 - 14:10',
-                        '9': '14:10 - 15:00', '10': '15:00 - 15:50', '11': '15:50 - 16:40', '12': '16:40 - 17:30'
-                    };
-
-                    const thoiGian = `${thuText}, Tiết ${dk.tietBatDau} - ${dk.tietKetThuc} (${tietTime[dk.tietBatDau].split(' - ')[0]} - ${tietTime[dk.tietKetThuc].split(' - ')[1]})`;
-
-                    const soLuongDangKy = sinhVienDangKyList.filter(sv => sv.maHP === dk.maHP && sv.hocKy === dk.hocKy).length;
-                    const siSoToiDa = dk.siSo;
-
-                    const isRegistered = sinhVienDangKyList.some(sv => sv.maSinhVien === maSinhVien && sv.maHP === dk.maHP && sv.hocKy === dk.hocKy);
-
-                    const newRow = document.createElement('tr');
-                    newRow.innerHTML = `
-                        <td>${tenKhoa}</td>
-                        <td>${tenNganh}</td>
-                        <td>${tenHP}</td>
-                        <td>${dk.hocKy}</td>
-                        <td>${thoiGian}</td>
-                        <td>${tenToa} - ${tenPhong}</td>
-                        <td>${siSoToiDa}</td>
-                        <td>${soLuongDangKy}</td>
-                        <td class="actions">
-                            ${isRegistered ?
-                                `<button class="cancel-btn" onclick="huyDangKy('${dk.maHP}', '${dk.hocKy}')"><i class="fas fa-times"></i></button>` :
-                                soLuongDangKy < siSoToiDa ?
-                                    `<button class="register-btn" onclick="dangKyHocPhan('${dk.maHP}', '${dk.hocKy}')"><i class="fas fa-check"></i></button>` :
-                                    `<button class="register-btn" disabled><i class="fas fa-ban"></i></button>`
-                            }
-                        </td>
-                    `;
-                    tbody.appendChild(newRow);
+                    if (!hp) return false;
+                    const matchTrangThai = hp.trangThai === 'Đã công bố';
+                    const matchKhoa = !selectedKhoa || dk.khoa === selectedKhoa;
+                    const matchNganh = !selectedNganh || dk.nganh === selectedNganh;
+                    const matchHocKy = !selectedHocKy || dk.hocKy === selectedHocKy;
+                    return matchTrangThai && matchKhoa && matchNganh && matchHocKy;
                 });
+
+            if (!filteredHocPhan.length) {
+                showNotification('Không tìm thấy lớp học phần phù hợp với bộ lọc.', true);
+                return;
+            }
+
+            filteredHocPhan.forEach(dk => {
+                const tenKhoa = khoaList.find(k => k.maKhoa === dk.khoa)?.tenKhoa || dk.khoa;
+                const tenNganh = nganhList.find(n => n.maNganh === dk.nganh)?.tenNganh || dk.nganh;
+                const hp = hocPhanList.find(item => item.ma === dk.maHP);
+                const tenToa = toaNhaList.find(t => t.maToa === dk.toaNha)?.tenToa || dk.toaNha;
+                const phong = phongHocList.find(p => p.maPhong === dk.maPhong);
+                const tenHP = hp ? `${dk.maHP} - ${hp.ten}` : dk.maHP;
+                const tenPhong = phong ? `${dk.maPhong} - ${phong.tenPhong}` : dk.maPhong;
+
+                const thuText = {
+                    '2': 'Thứ 2', '3': 'Thứ 3', '4': 'Thứ 4', '5': 'Thứ 5',
+                    '6': 'Thứ 6', '7': 'Thứ 7', '8': 'Chủ nhật'
+                }[dk.thu];
+
+                const tietTime = {
+                    '1': '6:30 - 7:20', '2': '7:20 - 8:10', '3': '8:10 - 9:00', '4': '9:00 - 9:50',
+                    '5': '9:50 - 10:40', '6': '10:40 - 11:30', '7': '12:30 - 13:20', '8': '13:20 - 14:10',
+                    '9': '14:10 - 15:00', '10': '15:00 - 15:50', '11': '15:50 - 16:40', '12': '16:40 - 17:30'
+                };
+
+                const thoiGian = `${thuText}, Tiết ${dk.tietBatDau} - ${dk.tietKetThuc} (${tietTime[dk.tietBatDau].split(' - ')[0]} - ${tietTime[dk.tietKetThuc].split(' - ')[1]})`;
+
+                const soLuongDangKy = sinhVienDangKyList.filter(sv => sv.maHP === dk.maHP && sv.hocKy === dk.hocKy).length;
+                const siSoToiDa = dk.siSoToiDa;
+
+                const isRegistered = sinhVienDangKyList.some(sv => sv.maSinhVien === maSinhVien && sv.maHP === dk.maHP && sv.hocKy === dk.hocKy);
+
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${tenKhoa}</td>
+                    <td>${tenNganh}</td>
+                    <td>${tenHP}</td>
+                    <td>${dk.hocKy}</td>
+                    <td>${thoiGian}</td>
+                    <td>${tenToa} - ${tenPhong}</td>
+                    <td>${siSoToiDa}</td>
+                    <td>${soLuongDangKy}</td>
+                    <td class="actions">
+                        ${isRegistered ?
+                            `<button class="cancel-btn" onclick="huyDangKy('${dk.maHP}', '${dk.hocKy}')"><i class="fas fa-times"></i></button>` :
+                            soLuongDangKy < siSoToiDa ?
+                                `<button class="register-btn" onclick="dangKyHocPhan('${dk.maHP}', '${dk.hocKy}')"><i class="fas fa-check"></i></button>` :
+                                `<button class="register-btn" disabled><i class="fas fa-ban"></i></button>`
+                        }
+                    </td>
+                `;
+                tbody.appendChild(newRow);
+            });
+
+            showNotification(`Đã hiển thị ${filteredHocPhan.length} lớp học phần.`);
         }
 
         function loadThoiKhoaBieu() {
@@ -602,7 +785,7 @@ if (!isset($_SESSION['role'])) {
             }
 
             const soLuongDangKy = sinhVienDangKyList.filter(sv => sv.maHP === maHP && sv.hocKy === hocKy).length;
-            if (soLuongDangKy >= dk.siSo) {
+            if (soLuongDangKy >= dk.siSoToiDa) {
                 showNotification('Học phần đã hết chỗ.', true);
                 return;
             }
@@ -650,6 +833,7 @@ if (!isset($_SESSION['role'])) {
                 return;
             }
 
+            const maSinhVien = sessionStorage.getItem('maSinhVien');
             let sinhVienDangKyList = JSON.parse(localStorage.getItem('sinhVienDangKyList')) || [];
             sinhVienDangKyList = sinhVienDangKyList.filter(sv => !(sv.maSinhVien === maSinhVien && sv.maHP === maHP && sv.hocKy === hocKy));
             localStorage.setItem('sinhVienDangKyList', JSON.stringify(sinhVienDangKyList));

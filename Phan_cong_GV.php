@@ -320,17 +320,23 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Quản trị viên') {
             <div class="details">
                 <div class="role"><?php echo htmlspecialchars($_SESSION['full_name']); ?></div>
                 <div><?php echo htmlspecialchars($_SESSION['role']); ?></div>
+            </div>
         </div>
-    </div>
         <ul>
-            <li><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.php">Quản lý học phần</a></li>
-            <li><i class="fas fa-graduation-cap"></i><a href="Quan_ly_LHP.php">Quản lý lớp học phần</a></li>
-            <li class="active"><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.php">Phân công giảng viên</a></li>
-            <li><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.php">Quản lý phòng học</a></li>
-            <li><i class="fas fa-users"></i><a href="Quan_ly_ND.php">Quản lý người dùng</a></li>
-            <li><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.php">Đăng ký học phần</a></li>
-            <li><i class="fas fa-calendar-check"></i><a href="TKB.php">Xem thời khóa biểu</a></li>
-            <li><i class="fas fa-chart-bar"></i><a href="Thongke_Baocao.php">Thống kê báo cáo</a></li>
+            <?php if ($_SESSION['role'] === 'Quản trị viên') { ?>
+                <li><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.php">Quản lý học phần</a></li>
+                <li><i class="fas fa-graduation-cap"></i><a href="Quan_ly_LHP.php">Quản lý lớp học phần</a></li>
+                <li class="active"><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.php">Phân công giảng viên</a></li>
+                <li><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.php">Quản lý phòng học</a></li>
+                <li><i class="fas fa-users"></i><a href="Quan_ly_ND.php">Quản lý người dùng</a></li>
+                <li><i class="fas fa-chart-bar"></i><a href="Thongke_Baocao.php">Thống kê báo cáo</a></li>
+            <?php } elseif ($_SESSION['role'] === 'Sinh viên') { ?>
+                <li><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.php">Đăng ký học phần</a></li>
+                <li><i class="fas fa-calendar-check"></i><a href="TKB.php">Xem thời khóa biểu</a></li>
+            <?php } elseif ($_SESSION['role'] === 'Giảng viên') { ?>
+                <li><i class="fas fa-graduation-cap"></i><a href="Quan_ly_LHP.php">Quản lý lớp học</a></li>
+                <li><i class="fas fa-calendar-check"></i><a href="TKB.php">Xem lịch dạy</a></li>
+            <?php } ?>
             <li><i class="fas fa-sign-out-alt"></i><a href="Controller/c_signout.php">Đăng xuất</a></li>
         </ul>
     </div>
@@ -419,12 +425,110 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Quản trị viên') {
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Khởi tạo dữ liệu mẫu
-            const giangVienList = JSON.parse(localStorage.getItem('giangVienList')) || [
-                { maGV: 'GV001', tenGV: 'Nguyễn Văn A' },
-                { maGV: 'GV002', tenGV: 'Trần Thị B' }
-            ];
-            localStorage.setItem('giangVienList', JSON.stringify(giangVienList));
+            // Dữ liệu mẫu
+            const sampleData = {
+                khoaList: [
+                    { maKhoa: 'CNTT', tenKhoa: 'Công Nghệ Thông Tin' },
+                    { maKhoa: 'SP', tenKhoa: 'Sư Phạm' },
+                    { maKhoa: 'KT', tenKhoa: 'Kinh Tế' }
+                ],
+                hocPhanList: [
+                    {
+                        ma: 'IT101',
+                        ten: 'Lập trình cơ bản',
+                        soTinChi: 3,
+                        siSoToiDa: 50,
+                        dieuKienTienQuyet: null,
+                        khoa: 'CNTT',
+                        nganh: 'CNTT',
+                        hocKy: '2024-1',
+                        trangThai: 'Đã công bố'
+                    },
+                    {
+                        ma: 'IT102',
+                        ten: 'Cấu trúc dữ liệu',
+                        soTinChi: 4,
+                        siSoToiDa: 40,
+                        dieuKienTienQuyet: 'IT101',
+                        khoa: 'CNTT',
+                        nganh: 'CNTT',
+                        hocKy: '2024-2',
+                        trangThai: 'Đã công bố'
+                    },
+                    {
+                        ma: 'SP101',
+                        ten: 'Ngữ văn 1',
+                        soTinChi: 3,
+                        siSoToiDa: 45,
+                        dieuKienTienQuyet: null,
+                        khoa: 'SP',
+                        nganh: 'SPNN',
+                        hocKy: '2024-1',
+                        trangThai: 'Đã công bố'
+                    },
+                    {
+                        ma: 'KT101',
+                        ten: 'Kinh tế vi mô',
+                        soTinChi: 3,
+                        siSoToiDa: 60,
+                        dieuKienTienQuyet: null,
+                        khoa: 'KT',
+                        nganh: 'KTQD',
+                        hocKy: '2025-1',
+                        trangThai: 'Chưa công bố'
+                    }
+                ],
+                giangVienList: [
+                    { maGV: 'GV001', tenGV: 'Nguyễn Văn A' },
+                    { maGV: 'GV002', tenGV: 'Trần Thị B' },
+                    { maGV: 'GV003', tenGV: 'Lê Văn C' }
+                ],
+                hocKyList: [
+                    '2024-1',
+                    '2024-2',
+                    '2025-1',
+                    '2025-2'
+                ],
+                phanCongList: [
+                    {
+                        khoa: 'CNTT',
+                        maHP: 'IT101',
+                        maLop: 'HP001_01',
+                        maGV: 'GV001',
+                        hocKy: '2024-1',
+                        thu: '2',
+                        tietBatDau: '1',
+                        tietKetThuc: '3'
+                    },
+                    {
+                        khoa: 'CNTT',
+                        maHP: 'IT102',
+                        maLop: 'HP002_01',
+                        maGV: 'GV002',
+                        hocKy: '2024-2',
+                        thu: '3',
+                        tietBatDau: '4',
+                        tietKetThuc: '6'
+                    },
+                    {
+                        khoa: 'SP',
+                        maHP: 'SP101',
+                        maLop: 'HP003_01',
+                        maGV: 'GV003',
+                        hocKy: '2024-1',
+                        thu: '4',
+                        tietBatDau: '7',
+                        tietKetThuc: '9'
+                    }
+                ]
+            };
+
+            // Lưu dữ liệu mẫu vào localStorage
+            localStorage.setItem('khoaList', JSON.stringify(sampleData.khoaList));
+            localStorage.setItem('hocPhanList', JSON.stringify(sampleData.hocPhanList));
+            localStorage.setItem('giangVienList', JSON.stringify(sampleData.giangVienList));
+            localStorage.setItem('hocKyList', JSON.stringify(sampleData.hocKyList));
+            localStorage.setItem('phanCongList', JSON.stringify(sampleData.phanCongList));
 
             loadKhoa();
             loadHocPhan();
@@ -960,7 +1064,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Quản trị viên') {
         }
 
         function dangXuat() {
-            window.location.href = 'Dang_Nhap.html';
+            window.location.href = 'Dang_Nhap.php';
         }
     </script>
 </body>

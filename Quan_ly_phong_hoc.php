@@ -1,9 +1,9 @@
 <?php
-    session_start();
-    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Quản trị viên') {
-        header("Location: Dang_Nhap.php");
-        exit();
-    }
+session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Quản trị viên') {
+    header("Location: Dang_Nhap.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -305,14 +305,20 @@
             </div>
         </div>
         <ul>
+        <?php if ($_SESSION['role'] === 'Quản trị viên') { ?>
             <li><i class="fas fa-book"></i><a href="Quan_ly_hoc_phan.php">Quản lý học phần</a></li>
             <li><i class="fas fa-graduation-cap"></i><a href="Quan_ly_LHP.php">Quản lý lớp học phần</a></li>
             <li><i class="fas fa-chalkboard-teacher"></i><a href="Phan_cong_GV.php">Phân công giảng viên</a></li>
             <li class="active"><i class="fas fa-school"></i><a href="Quan_ly_phong_hoc.php">Quản lý phòng học</a></li>
             <li><i class="fas fa-users"></i><a href="Quan_ly_ND.php">Quản lý người dùng</a></li>
+            <li><i class="fas fa-chart-bar"></i><a href="Thongke_Baocao.php">Thống kê báo cáo</a></li>
+        <?php } elseif ($_SESSION['role'] === 'Sinh viên') { ?>
             <li><i class="fas fa-clipboard-list"></i><a href="Dang_ky_hoc_phan.php">Đăng ký học phần</a></li>
             <li><i class="fas fa-calendar-check"></i><a href="TKB.php">Xem thời khóa biểu</a></li>
-            <li><i class="fas fa-chart-bar"></i><a href="Thongke_Baocao.php">Thống kê báo cáo</a></li>
+        <?php } elseif ($_SESSION['role'] === 'Giảng viên') { ?>
+            <li><i class="fas fa-graduation-cap"></i><a href="Quan_ly_LHP.php">Quản lý lớp học</a></li>
+            <li><i class="fas fa-calendar-check"></i><a href="TKB.php">Xem lịch dạy</a></li>
+        <?php } ?>
             <li><i class="fas fa-sign-out-alt"></i><a href="Controller/c_signout.php">Đăng xuất</a></li>
         </ul>
     </div>
@@ -345,48 +351,55 @@
                         <th>Hành động</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>Tòa A</td>
-                        <td>P101</td>
-                        <td>Phòng học A1</td>
-                        <td>50</td>
-                        <td class="actions">
-                            <button class="edit-btn" onclick="chinhSuaDong(this)"><i class="fas fa-edit"></i></button>
-                            <button class="delete-btn" onclick="xoaDong(this)"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>
     <script>
-        // Dữ liệu mẫu cho tòa nhà
-        const toaNhaList = [
-            { maToa: 'T01', tenToa: 'Tòa A' },
-            { maToa: 'T02', tenToa: 'Tòa B' },
-            { maToa: 'T03', tenToa: 'Tòa C' }
-        ];
+        // Dữ liệu mẫu cho tòa nhà và phòng học
+        const sampleData = {
+            toaNhaList: [
+                { maToa: 'T01', tenToa: 'Tòa A' },
+                { maToa: 'T02', tenToa: 'Tòa B' },
+                { maToa: 'T03', tenToa: 'Tòa C' }
+            ],
+            phongHocList: [
+                { toaNha: 'T01', maPhong: 'P101', tenPhong: 'Phòng học A101', sucChua: 50 },
+                { toaNha: 'T02', maPhong: 'P201', tenPhong: 'Phòng học B101', sucChua: 40 },
+                { toaNha: 'T03', maPhong: 'P301', tenPhong: 'Phòng học C101', sucChua: 30 }
+            ]
+        };
 
         // Lấy dữ liệu từ localStorage khi tải trang
         document.addEventListener('DOMContentLoaded', function () {
+            // Lưu dữ liệu mẫu vào localStorage nếu chưa có
             if (!localStorage.getItem('toaNhaList')) {
-                localStorage.setItem('toaNhaList', JSON.stringify(toaNhaList));
+                localStorage.setItem('toaNhaList', JSON.stringify(sampleData.toaNhaList));
+            }
+            if (!localStorage.getItem('phongHocList')) {
+                localStorage.setItem('phongHocList', JSON.stringify(sampleData.phongHocList));
             }
             loadToaNha();
-            const data = JSON.parse(localStorage.getItem('phongHocList')) || [];
-            data.forEach(ph => themDongVaoBang(ph.toaNha, ph.maPhong, ph.tenPhong, ph.sucChua));
+            loadPhongHoc();
         });
 
         function loadToaNha() {
             const toaNhaList = JSON.parse(localStorage.getItem('toaNhaList')) || [];
             const selectToaNha = document.getElementById('toaNha');
+            selectToaNha.innerHTML = '<option value="" disabled selected>Chọn tòa nhà</option>';
             toaNhaList.forEach(toa => {
                 const option = document.createElement('option');
                 option.value = toa.maToa;
                 option.text = toa.tenToa;
                 selectToaNha.appendChild(option);
             });
+        }
+
+        function loadPhongHoc() {
+            const phongHocList = JSON.parse(localStorage.getItem('phongHocList')) || [];
+            const tbody = document.getElementById('bangPhongHoc').querySelector('tbody');
+            tbody.innerHTML = '';
+            phongHocList.forEach(ph => themDongVaoBang(ph.toaNha, ph.maPhong, ph.tenPhong, ph.sucChua));
         }
 
         function dangXuat() {
@@ -404,8 +417,8 @@
                 return;
             }
 
-            if (isNaN(sucChua) || sucChua <= 0) {
-                alert("Sức chứa phải là số dương.");
+            if (isNaN(sucChua) || sucChua <= 0 || sucChua > 50) {
+                alert("Sức chứa phải là số dương và không vượt quá 50.");
                 return;
             }
 
@@ -470,7 +483,7 @@
             cells[0].innerHTML = `<select id="editToaNha">${toaNhaOptions}</select>`;
             cells[1].innerHTML = `<input type="text" value="${maPhong}" style="width: 100%;">`;
             cells[2].innerHTML = `<input type="text" value="${tenPhong}" style="width: 100%;">`;
-            cells[3].innerHTML = `<input type="number" value="${sucChua}" min="1" style="width: 100%;">`;
+            cells[3].innerHTML = `<input type="number" value="${sucChua}" min="1" max="50" style="width: 100%;">`;
 
             button.innerHTML = '<i class="fas fa-save"></i>';
             button.onclick = function () {
@@ -486,8 +499,8 @@
                     return;
                 }
 
-                if (isNaN(newSucChua) || newSucChua <= 0) {
-                    alert("Sức chứa phải là số dương.");
+                if (isNaN(newSucChua) || newSucChua <= 0 || newSucChua > 50) {
+                    alert("Sức chứa phải là số dương và không vượt quá 50.");
                     return;
                 }
 

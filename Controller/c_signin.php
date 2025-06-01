@@ -44,10 +44,10 @@ try {
                 header("Location: ../Trang_chu_Admin.php");
                 break;
             case 'Giảng viên':
-                header("Location: ../trang_chu_giang_vien.php");
+                header("Location: ../Quan_ly_LHP.php");
                 break;
             case 'Sinh viên':
-                header("Location: ../trang_chu_sinh_vien.php");
+                header("Location: ../Dang_ky_hoc_phan.php");
                 break;
             default:
                 header("Location: ../Dang_Nhap.php?error=Vai trò không hợp lệ");
